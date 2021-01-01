@@ -12,8 +12,9 @@ function stopUploadThreads() {
 
 function clone() {
     var link = $("#picURL").val();
+    var dir = $("#picDir").val()
     $("#status").text("服务端正在克隆，请稍候...");
-    axios.get('/clone?url=' + link)
+    axios.get('/clone?url=' + link + '&dir=' + dir)
         .then(function (response) {
                 if (response.data.code == 200) {
                     sendStatus("克隆成功！");
@@ -32,13 +33,17 @@ function upload() {
         $("#status").text("请选择图片！");
     } else {
         $("#status").text("准备传输，请稍等。");
+        var dir = $("#picDir").val();
+        if (dir == null) {
+            dir = "post";
+        }
         for (var i = 0; i < document.getElementById("upload").files.length; i++) {
             var file = document.getElementById("upload").files[i];
             suffixName = file.name.split(".");
             suffixName = suffixName[suffixName.length - 1];
             suffixName = suffixName.toLowerCase();
             if (suffixName === "jpeg" || suffixName === "jpg" || suffixName === "png" || suffixName === "gif" || suffixName === "svg" || suffixName === "bmp" || suffixName === "ico" || suffixName === "tiff") {
-                uploadToServer(file);
+                uploadToServer(file, dir);
             } else {
                 sendInnerNotify(file.name + " 格式不受支持，将跳过该图片的上传。");
             }
@@ -46,7 +51,7 @@ function upload() {
     }
 }
 
-function uploadToServer(file) {
+function uploadToServer(file, dir) {
     if (sourceAll == undefined) {
         console.log("Generating new Token...");
         sourceAll = axios.CancelToken.source();
@@ -56,6 +61,7 @@ function uploadToServer(file) {
     if (size <= picLimit) {
         var param = new FormData();
         param.append('file', file);
+        param.append("dir", dir);
         var config = {
             headers: {'Content-Type': 'multipart/form-data'},
             onUploadProgress: function (progressEvent) {

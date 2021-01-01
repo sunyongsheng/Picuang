@@ -1,6 +1,5 @@
 package pers.adlered.picuang.tool;
 
-import org.springframework.util.ClassUtils;
 import pers.adlered.picuang.prop.Prop;
 
 import java.io.File;
@@ -17,22 +16,41 @@ import java.util.UUID;
  **/
 public class ToolBox {
     public static String getSuffixName(String filename) {
+        if (filename == null) return ".jpg";
         String suffixName = filename.substring(filename.lastIndexOf("."));
         suffixName = suffixName.toLowerCase();
         return suffixName;
     }
 
     public static boolean isPic(String suffixName) {
-        return (suffixName.equals(".jpeg") || suffixName.equals(".jpg") || suffixName.equals(".png") || suffixName.equals(".gif") || suffixName.equals(".svg") || suffixName.equals(".bmp") || suffixName.equals(".ico") || suffixName.equals(".tiff"));
+        return (suffixName.equals(".jpeg")
+                || suffixName.equals(".jpg")
+                || suffixName.equals(".png")
+                || suffixName.equals(".gif")
+                || suffixName.equals(".svg")
+                || suffixName.equals(".bmp")
+                || suffixName.equals(".ico")
+                || suffixName.equals(".tiff"));
     }
 
-    public static String getPicStoreDir() {
-        return ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/uploadImages/";
+    public static String getPicStoreDir(String dir) {
+        return Prop.savePath() + dir + File.separator;
     }
 
-    public static File generatePicFile(String suffixName, String time, String IP) {
-        String path = getPicStoreDir() + IP + "/" + time;
-        String fileName = UUID.randomUUID() + suffixName;
+    public static String getPicFilename(String originalName, boolean forceUUID) {
+        int strategy = Prop.imgPathStrategy();
+        if (forceUUID || strategy == 0) {
+            String suffixName = getSuffixName(originalName);
+            return UUID.randomUUID() + suffixName;
+        } else if (strategy == 1) {
+            return  originalName;
+        }
+        return originalName;
+    }
+
+    public static File generatePicFile(String dir, String originalFileName, boolean forceUUID) {
+        String path = getPicStoreDir(dir);
+        String fileName = getPicFilename(originalFileName, forceUUID);
         return new File(path + fileName);
     }
 

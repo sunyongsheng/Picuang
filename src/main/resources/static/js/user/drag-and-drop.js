@@ -38,7 +38,7 @@ function bind() {
             suffixName = suffixName[suffixName.length - 1];
             suffixName = suffixName.toLowerCase();
             if (suffixName === "jpeg" || suffixName === "jpg" || suffixName === "png" || suffixName === "gif" || suffixName === "svg" || suffixName === "bmp" || suffixName === "ico" || suffixName === "tiff") {
-                uploadToServer(fs[i]);
+                uploadToServer(fs[i], "post");
             } else {
                 sendInnerNotify(fs[i].name + " 格式不受支持，将跳过该图片的上传。");
             }

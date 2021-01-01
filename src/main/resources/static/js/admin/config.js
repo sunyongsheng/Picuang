@@ -39,6 +39,22 @@ function showConfig() {
                     "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"uploadLimit\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
                     "<button class='btn btn-primary' type='button' onclick='editConfig(\"uploadLimit\")'>修改</button></span></div></div>");
             });
+        axios.get('/api/admin/getConf?conf=savePath')
+            .then(function (response) {
+                $("#config-row").prepend("<div class='col-lg-6'>" +
+                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-open\"></span>" +
+                    " 图片保存路径</span><input id='savePath-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
+                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"savePath\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
+                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"savePath\")'>修改</button></span></div></div>");
+            });
+        axios.get('/api/admin/getConf?conf=imgNameStrategy')
+            .then(function (response) {
+                $("#config-row").prepend("<div class='col-lg-6'>" +
+                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-open\"></span>" +
+                    " 图片命名策略</span><input id='imgNameStrategy-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
+                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"imgNameStrategy\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
+                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"imgNameStrategy\")'>修改</button></span></div></div>");
+            });
         // 二列
         axios.get('/api/admin/getConf?conf=adminOnly')
             .then(function (response) {
@@ -71,6 +87,13 @@ function getHelp(key) {
             "冒号左侧代表\"时间\"，右侧代表\"次数\"。<br>" +
             "例如\"3:1\"代表\"每三秒允许克隆一张图片\"。<br>" +
             "设置过小的数值会致使克隆速度变慢。<br>");
+    } else if (key === "savePath") {
+        tip("设置图片保存路径。<br>" +
+            "留空代表使用服务所在路径下的static/uploadImages/<br>")
+    } else if (key === "imgNameStrategy") {
+        tip("设置图片的URL地址<br>" +
+            "0代表使用UUID为图片生成名称。<br>" +
+            "1代表使用图片原本的名称<br>")
     }
 }
 

@@ -1,6 +1,7 @@
 package pers.adlered.picuang.prop;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 import pers.adlered.picuang.controller.UploadController;
 import pers.adlered.picuang.log.Logger;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
@@ -20,17 +21,22 @@ import java.util.Set;
 public class Prop {
 
     public static final String CONFIG_FILENAME = "config.ini";
+
     public static final String CONFIG_KEY_IMAGE_UPLOADED_COUNT = "imageUploadedCount";
     public static final String CONFIG_KEY_VERSION = "version";
     public static final String CONFIG_KEY_PASSWORD = "password";
     public static final String CONFIG_KEY_ADMIN_ONLY = "adminOnly";
     public static final String CONFIG_KEY_UPLOAD_LIMIT = "uploadLimit";
     public static final String CONFIG_KEY_CLONE_LIMIT = "cloneLimit";
+    public static final String CONFIG_KEY_SAVE_PATH = "savePath";
+    public static final String CONFIG_KEY_IMG_NAME_STRATEGY = "imgNameStrategy";
 
     // 版本号
     private static final String version = "V2.4";
 
     private static final Properties properties = new Properties();
+
+    public static volatile boolean customSavePath = false;
 
     static {
         put();
@@ -48,12 +54,16 @@ public class Prop {
             properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
         } catch (FileNotFoundException e) {
             Logger.log("Generating new profile...");
+
             properties.put(CONFIG_KEY_IMAGE_UPLOADED_COUNT, "0");
             properties.put(CONFIG_KEY_VERSION, version);
             properties.put(CONFIG_KEY_PASSWORD, "");
             properties.put(CONFIG_KEY_ADMIN_ONLY, "off");
             properties.put(CONFIG_KEY_UPLOAD_LIMIT, "1:1");
             properties.put(CONFIG_KEY_CLONE_LIMIT, "3:1");
+            properties.put(CONFIG_KEY_SAVE_PATH, "");
+            properties.put(CONFIG_KEY_IMG_NAME_STRATEGY, "0");
+
             try {
                 properties.store(new BufferedOutputStream(new FileOutputStream(CONFIG_FILENAME)), "Save Configs File.");
             } catch (IOException e1) {
@@ -72,7 +82,7 @@ public class Prop {
         try {
             properties.setProperty(key, value);
             Logger.log("[Prop] Set key '" + key + "' to value '" + value + "'");
-            PrintWriter printWriter = new PrintWriter(new FileWriter("config.ini"), true);
+            PrintWriter printWriter = new PrintWriter(new FileWriter(CONFIG_FILENAME), true);
             Set<Object> set = properties.keySet();
             for (Object object : set) {
                 String k = (String) object;
@@ -138,5 +148,23 @@ public class Prop {
 
     public static String password() {
         return Prop.get(CONFIG_KEY_PASSWORD);
+    }
+
+    public static String savePath() {
+        String config = get(CONFIG_KEY_SAVE_PATH);
+        customSavePath = true;
+        if (config == null || config.isEmpty()) {
+            customSavePath = false;
+            config = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/uploadImages/";
+        }
+        return config.endsWith(File.separator) ? config : config + File.separator;
+    }
+
+    public static int imgPathStrategy() {
+        try {
+            return Integer.parseInt(get(CONFIG_KEY_IMG_NAME_STRATEGY));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

@@ -31,6 +31,6 @@ document.getElementsByTagName('html')[0].addEventListener('paste', function (e) 
                 }
             }
         }
-        uploadToServer(file);
+        uploadToServer(file, "post");
     }, 400);
 });

@@ -3,6 +3,7 @@ package pers.adlered.picuang.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.access.HttpOrHttpsAccess;
@@ -30,7 +31,8 @@ public class UploadController {
 
     @RequestMapping("/upload")
     @ResponseBody
-    public Result<String> upload(@PathVariable MultipartFile file, HttpServletRequest request, HttpSession session) {
+    public Result<String> upload(@RequestParam MultipartFile file, @RequestParam String dir,
+                                 HttpServletRequest request, HttpSession session) {
         synchronized (this) {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             boolean allowed = uploadLimiter.access(addr);
@@ -62,8 +64,8 @@ public class UploadController {
             String suffixName = ToolBox.getSuffixName(filename);
             Logger.log("SuffixName: " + suffixName);
             if (ToolBox.isPic(suffixName)) {
-                String time = ToolBox.getDirByTime();
-                File dest = ToolBox.generatePicFile(suffixName, time, addr);
+//                String time = ToolBox.getDirByTime();
+                File dest = ToolBox.generatePicFile(dir, filename, false);
                 result.setData(filename);
                 filename = dest.getName();
                 Logger.log("Saving into " + dest.getAbsolutePath());
@@ -72,7 +74,7 @@ public class UploadController {
                 }
                 try {
                     file.transferTo(dest);
-                    String url = "/uploadImages/" + addr + "/" + time + filename;
+                    String url = getDirPath(dir) + filename;
                     result.setCode(200);
                     result.setMsg(url);
                     int count = Prop.imageUploadedCount();
@@ -95,7 +97,7 @@ public class UploadController {
 
     @RequestMapping("/clone")
     @ResponseBody
-    public Result<String> clone(String url, HttpServletRequest request, HttpSession session) {
+    public Result<String> clone(String url, String dir, HttpServletRequest request, HttpSession session) {
         synchronized (this) {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             // IP地址访问频率限制
@@ -137,9 +139,9 @@ public class UploadController {
                 Logger.log("SuffixName: " + suffixName);
                 String time = ToolBox.getDirByTime();
                 if (ToolBox.isPic(suffixName)) {
-                    dest = ToolBox.generatePicFile(suffixName, time, addr);
+                    dest = ToolBox.generatePicFile(suffixName, dir, true);
                 } else {
-                    dest = ToolBox.generatePicFile(".png", time, addr);
+                    dest = ToolBox.generatePicFile(".png", dir, true);
                 }
                 Logger.log("Saving into " + dest.getAbsolutePath());
                 if (!dest.getParentFile().exists()) {
@@ -162,7 +164,7 @@ public class UploadController {
                 m.find();
                 result.setData("From " + m.group());
                 result.setCode(200);
-                result.setMsg("/uploadImages/" + addr + "/" + time + dest.getName());
+                result.setMsg(getDirPath(dir) + dest.getName());
                 int count = Prop.imageUploadedCount();
                 ++count;
                 Prop.imageUploadedCount(count);
@@ -182,9 +184,6 @@ public class UploadController {
 
     /**
      * 检查管理员是否已登录
-     *
-     * @param session
-     * @return
      */
     public boolean logged(HttpSession session) {
         try {
@@ -192,5 +191,15 @@ public class UploadController {
         } catch (NullPointerException ignored) {
             return false;
         }
+    }
+
+    String getDirPath(String dir) {
+        if (!Prop.customSavePath) {
+            return "/uploadImages/";
+        }
+        if (dir == null || dir.isEmpty()) {
+            return "/";
+        }
+        return "/" + dir + "/";
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pers.adlered.picuang.controller.api.bean.PicProp;
+import pers.adlered.picuang.prop.Prop;
 import pers.adlered.picuang.tool.IPUtil;
 import pers.adlered.picuang.tool.ToolBox;
 
@@ -109,6 +110,6 @@ public class History {
 
     private String getHome(HttpServletRequest request) {
         String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
-        return ToolBox.getPicStoreDir() + addr + "/";
+        return Prop.savePath();
     }
 }
