@@ -20,7 +20,7 @@ public class MainController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView("index");
         // 图片总数计算
-        modelAndView.addObject("files", Prop.get("imageUploadedCount"));
+        modelAndView.addObject("files", Prop.imageUploadedCount());
         // 剩余空间计算
         File diskPartition = new File("/");
         String freePartitionSpace = new DecimalFormat("#.00").format(diskPartition.getFreeSpace() / 1073741824);

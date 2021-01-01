@@ -18,6 +18,15 @@ import java.util.Set;
  **/
 @Component
 public class Prop {
+
+    public static final String CONFIG_FILENAME = "config.ini";
+    public static final String CONFIG_KEY_IMAGE_UPLOADED_COUNT = "imageUploadedCount";
+    public static final String CONFIG_KEY_VERSION = "version";
+    public static final String CONFIG_KEY_PASSWORD = "password";
+    public static final String CONFIG_KEY_ADMIN_ONLY = "adminOnly";
+    public static final String CONFIG_KEY_UPLOAD_LIMIT = "uploadLimit";
+    public static final String CONFIG_KEY_CLONE_LIMIT = "cloneLimit";
+
     // 版本号
     private static final String version = "V2.4";
 
@@ -30,23 +39,23 @@ public class Prop {
     }
 
     public static void del() {
-        File file = new File("config.ini");
+        File file = new File(CONFIG_FILENAME);
         file.delete();
     }
 
     public static void put() {
         try {
-            properties.load(new BufferedInputStream(new FileInputStream("config.ini")));
+            properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
         } catch (FileNotFoundException e) {
             Logger.log("Generating new profile...");
-            properties.put("imageUploadedCount", "0");
-            properties.put("version", version);
-            properties.put("password", "");
-            properties.put("adminOnly", "off");
-            properties.put("uploadLimit", "1:1");
-            properties.put("cloneLimit", "3:1");
+            properties.put(CONFIG_KEY_IMAGE_UPLOADED_COUNT, "0");
+            properties.put(CONFIG_KEY_VERSION, version);
+            properties.put(CONFIG_KEY_PASSWORD, "");
+            properties.put(CONFIG_KEY_ADMIN_ONLY, "off");
+            properties.put(CONFIG_KEY_UPLOAD_LIMIT, "1:1");
+            properties.put(CONFIG_KEY_CLONE_LIMIT, "3:1");
             try {
-                properties.store(new BufferedOutputStream(new FileOutputStream("config.ini")), "Save Configs File.");
+                properties.store(new BufferedOutputStream(new FileOutputStream(CONFIG_FILENAME)), "Save Configs File.");
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -73,7 +82,7 @@ public class Prop {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (!key.equals("imageUploadedCount")) {
+        if (!key.equals(CONFIG_KEY_IMAGE_UPLOADED_COUNT)) {
             reload();
         }
     }
@@ -86,11 +95,11 @@ public class Prop {
         Logger.log("Reloading profile...");
         // Reload properties
         try {
-            properties.load(new BufferedInputStream(new FileInputStream("config.ini")));
+            properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
         } catch (Exception ignored) {}
         // Upload limit
         try {
-            String uploadLimitMaster = get("uploadLimit");
+            String uploadLimitMaster = get(CONFIG_KEY_UPLOAD_LIMIT);
             if (uploadLimitMaster.contains(":")) {
                 int uploadLimitTime = Integer.parseInt(uploadLimitMaster.split(":")[0]);
                 int uploadLimitTimes = Integer.parseInt(uploadLimitMaster.split(":")[1]);
@@ -100,7 +109,7 @@ public class Prop {
         } catch (Exception ignored) {}
         // Clone limit
         try {
-            String cloneLimitMaster = get("cloneLimit");
+            String cloneLimitMaster = get(CONFIG_KEY_CLONE_LIMIT);
             if (cloneLimitMaster.contains(":")) {
                 int cloneLimitTime = Integer.parseInt(cloneLimitMaster.split(":")[0]);
                 int cloneLimitTimes = Integer.parseInt(cloneLimitMaster.split(":")[1]);
@@ -113,5 +122,21 @@ public class Prop {
     public static void renew() {
         del();
         put();
+    }
+
+    public static boolean adminOnly() {
+        return Prop.get(CONFIG_KEY_ADMIN_ONLY).equals("on");
+    }
+
+    public static int imageUploadedCount() {
+        return Integer.parseInt(Prop.get(CONFIG_KEY_IMAGE_UPLOADED_COUNT));
+    }
+
+    public static void imageUploadedCount(int value) {
+        Prop.set(CONFIG_KEY_IMAGE_UPLOADED_COUNT, String.valueOf(value));
+    }
+
+    public static String password() {
+        return Prop.get(CONFIG_KEY_PASSWORD);
     }
 }

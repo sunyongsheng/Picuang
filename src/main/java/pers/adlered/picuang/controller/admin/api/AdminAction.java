@@ -30,7 +30,7 @@ public class AdminAction {
     public Result<String> init() {
         Result<String> result = new Result<>();
         try {
-            if (Prop.get("password").isEmpty()) {
+            if (Prop.password().isEmpty()) {
                 result.setCode(500);
                 result.setData(ToolBox.getINIDir());
             } else {
@@ -56,7 +56,7 @@ public class AdminAction {
         try {
             String admin = session.getAttribute("admin").toString();
             logged = Boolean.parseBoolean(admin);
-        } catch (NullPointerException NPE) {
+        } catch (NullPointerException ignored) {
         }
         if (logged) {
             result.setCode(200);
@@ -83,7 +83,7 @@ public class AdminAction {
             result.setCode(500);
             return result;
         }
-        String truePassword = Prop.get("password");
+        String truePassword = Prop.password();
         if (truePassword.equals(password)) {
             session.setAttribute("admin", "true");
             result.setCode(200);

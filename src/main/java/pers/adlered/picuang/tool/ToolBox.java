@@ -1,6 +1,7 @@
 package pers.adlered.picuang.tool;
 
 import org.springframework.util.ClassUtils;
+import pers.adlered.picuang.prop.Prop;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,6 @@ public class ToolBox {
     }
 
     public static String getINIDir() {
-        return new File("config.ini").getAbsolutePath();
+        return new File(Prop.CONFIG_FILENAME).getAbsolutePath();
     }
 }

@@ -35,7 +35,7 @@ public class UploadController {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             boolean allowed = uploadLimiter.access(addr);
             Result<String> result = new Result<>();
-            if (Prop.get("adminOnly").equals("on")) {
+            if (Prop.adminOnly()) {
                 Logger.log("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
                     Logger.log("User not logged! Uploading terminated.");
@@ -75,9 +75,9 @@ public class UploadController {
                     String url = "/uploadImages/" + addr + "/" + time + filename;
                     result.setCode(200);
                     result.setMsg(url);
-                    int count = Integer.parseInt(Prop.get("imageUploadedCount"));
+                    int count = Prop.imageUploadedCount();
                     ++count;
-                    Prop.set("imageUploadedCount", String.valueOf(count));
+                    Prop.imageUploadedCount(count);
                     return result;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -114,7 +114,7 @@ public class UploadController {
                 result.setMsg("请不要重复克隆同一张图片。你可以在右上方的\"历史\"选项找到你克隆过的图片！");
                 return result;
             }
-            if (Prop.get("adminOnly").equals("on")) {
+            if (Prop.adminOnly()) {
                 Logger.log("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
                     Logger.log("User not logged! Uploading terminated.");
@@ -163,9 +163,9 @@ public class UploadController {
                 result.setData("From " + m.group());
                 result.setCode(200);
                 result.setMsg("/uploadImages/" + addr + "/" + time + dest.getName());
-                int count = Integer.parseInt(Prop.get("imageUploadedCount"));
+                int count = Prop.imageUploadedCount();
                 ++count;
-                Prop.set("imageUploadedCount", String.valueOf(count));
+                Prop.imageUploadedCount(count);
                 return result;
             } catch (Exception e) {
                 // 出错时删除建立的文件，以防止无效图片过多产生
