@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pers.adlered.picuang.controller.api.bean.PicProp;
 import pers.adlered.picuang.prop.Prop;
 import pers.adlered.picuang.tool.IPUtil;
-import pers.adlered.picuang.tool.ToolBox;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -21,7 +20,7 @@ import java.util.List;
  * @date : 2019-11-06 16:24
  **/
 @Controller
-public class History {
+public class HistoryController {
     @RequestMapping("/api/list")
     @ResponseBody
     public List<PicProp> list(HttpServletRequest request, String year, String month, String day) {

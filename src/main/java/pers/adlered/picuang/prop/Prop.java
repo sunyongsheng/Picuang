@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import pers.adlered.picuang.controller.UploadController;
 import pers.adlered.picuang.log.Logger;
+import pers.adlered.picuang.tool.FileUtil;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
 import java.io.*;
@@ -39,19 +40,19 @@ public class Prop {
     public static volatile boolean customSavePath = false;
 
     static {
-        put();
+        init();
         Logger.log("Properties loaded.");
         reload();
     }
 
     public static void del() {
-        File file = new File(CONFIG_FILENAME);
-        file.delete();
+        new File(CONFIG_FILENAME).delete();
     }
 
-    public static void put() {
+    public static void init() {
         try {
             properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
+            savePath();
         } catch (FileNotFoundException e) {
             Logger.log("Generating new profile...");
 
@@ -131,7 +132,11 @@ public class Prop {
 
     public static void renew() {
         del();
-        put();
+        init();
+    }
+
+    public static String getConfigPath() {
+        return new File(CONFIG_FILENAME).getAbsolutePath();
     }
 
     public static boolean adminOnly() {
@@ -157,7 +162,7 @@ public class Prop {
             customSavePath = false;
             config = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/uploadImages/";
         }
-        return config.endsWith(File.separator) ? config : config + File.separator;
+        return FileUtil.ensureSuffix(config);
     }
 
     public static int imgPathStrategy() {

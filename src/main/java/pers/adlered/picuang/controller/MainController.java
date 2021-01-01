@@ -2,7 +2,6 @@ package pers.adlered.picuang.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import pers.adlered.picuang.prop.Prop;
@@ -35,7 +34,7 @@ public class MainController {
     @RequestMapping("/history")
     @ResponseBody
     public ModelAndView history() {
-        ModelAndView modelAndView = new ModelAndView("history");
+        ModelAndView modelAndView = new ModelAndView("historyController");
         modelAndView.addObject("version", Prop.getVersion());
         return modelAndView;
     }

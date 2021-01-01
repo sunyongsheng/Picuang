@@ -1,52 +1,75 @@
 package pers.adlered.picuang.tool;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import pers.adlered.picuang.log.Logger;
+import pers.adlered.picuang.prop.Prop;
+
+import java.io.File;
+import java.util.UUID;
 
 /**
- * <h3>picuang</h3>
- * <p>下载文件类</p>
- *
- * @author : https://github.com/AdlerED
- * @date : 2019-11-07 23:24
- **/
+ * @author Aengus Sun (sys6511@126.com)
+ * <p>
+ * date 2021/1/1
+ */
 public class FileUtil {
-    /**
-     * 下载项目根目录下doc下的文件
-     *
-     * @param response response
-     * @param fileName 文件名
-     * @return 返回结果 成功或者文件不存在
-     */
-    public static void downloadFile(HttpServletResponse response, String fileName) {
-        response.setHeader("content-type", "application/octet-stream");
-        response.setContentType("application/octet-stream");
-        try {
-            response.setHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
-        } catch (UnsupportedEncodingException e2) {
-            e2.printStackTrace();
+
+    public static final String FILE_SEPARATOR = File.separator;
+
+    public static String ensurePrefix(String string) {
+        if (string == null || string.isEmpty()) return "";
+        return string.startsWith(FILE_SEPARATOR) ? string : FILE_SEPARATOR + string;
+    }
+
+    public static String ensureSuffix(String string) {
+        if (string == null || string.isEmpty()) return "";
+        return string.endsWith(FILE_SEPARATOR) ? string : string + FILE_SEPARATOR;
+    }
+
+    public static String getExtension(String filename) {
+        if (filename == null) return ".jpg";
+        String suffixName = filename.substring(filename.lastIndexOf("."));
+        suffixName = suffixName.toLowerCase();
+        return suffixName;
+    }
+
+    public static boolean isPic(String filename) {
+        if (filename == null) return false;
+        return (filename.endsWith(".jpeg")
+                || filename.endsWith(".jpg")
+                || filename.endsWith(".png")
+                || filename.endsWith(".gif")
+                || filename.endsWith(".svg")
+                || filename.endsWith(".bmp")
+                || filename.endsWith(".ico")
+                || filename.endsWith(".tiff"));
+    }
+
+    public static String generateFilename(String originalName, boolean forceUUID) {
+        int strategy = Prop.imgPathStrategy();
+        if (forceUUID || strategy == 0) {
+            String suffixName = getExtension(originalName);
+            return UUID.randomUUID() + suffixName;
+        } else if (strategy == 1) {
+            return originalName;
         }
-        byte[] buff = new byte[1024];
-        BufferedInputStream bis = null;
-        OutputStream os = null;
-        try {
-            os = response.getOutputStream();
-            bis = new BufferedInputStream(new FileInputStream(new File(fileName)));
-            int i;
-            while ((i = bis.read(buff)) != -1) {
-                os.write(buff, 0, i);
-                os.flush();
-            }
-        } catch (IOException e3) {
-            e3.printStackTrace();
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException IOE) {
-                    IOE.printStackTrace();
-                }
+        return originalName;
+    }
+
+    public static void checkAndCreateDir(File dir) {
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
+                Logger.log("创建目录失败: " + dir);
             }
         }
+    }
+
+    public static String getFileStoreDir(String dir) {
+        return Prop.savePath() + ensureSuffix(dir);
+    }
+
+    public static File generateFile(String dir, String originalFileName, boolean forceUUID) {
+        String path = getFileStoreDir(dir);
+        String fileName = generateFilename(originalFileName, forceUUID);
+        return new File(path + fileName);
     }
 }

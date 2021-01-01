@@ -8,8 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.log.Logger;
 import pers.adlered.picuang.prop.Prop;
 import pers.adlered.picuang.result.Result;
-import pers.adlered.picuang.tool.FileUtil;
-import pers.adlered.picuang.tool.ToolBox;
+import pers.adlered.picuang.tool.DownloadUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,7 +22,7 @@ import java.io.File;
  * @date : 2019-11-07 17:31
  **/
 @Controller
-public class ConfigAction {
+public class ConfigActionController {
     /**
      * 检查管理员是否已登录
      *
@@ -47,7 +46,7 @@ public class ConfigAction {
             if (result != null) {
                 return result;
             } else {
-                return "找不到配置！如果你更新过Picuang，请备份并删除当前的config.ini文件（位于 " + ToolBox.getINIDir() + " ），然后重启服务端或点击\"生成新配置文件\"按钮，使Picuang重新生成新的配置文件。";
+                return "找不到配置！如果你更新过Picuang，请备份并删除当前的config.ini文件（位于 " + Prop.getConfigPath() + " ），然后重启服务端或点击\"生成新配置文件\"按钮，使Picuang重新生成新的配置文件。";
             }
         } else {
             return "Permission denied";
@@ -72,7 +71,7 @@ public class ConfigAction {
     public void exportConfig(HttpServletResponse response, HttpSession session) {
         if (logged(session)) {
             String fileName = "config.ini";
-            FileUtil.downloadFile(response, fileName);
+            DownloadUtil.downloadFile(response, fileName);
         }
     }
 

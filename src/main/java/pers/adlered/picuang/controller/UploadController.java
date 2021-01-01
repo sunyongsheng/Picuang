@@ -1,7 +1,6 @@
 package pers.adlered.picuang.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,8 +9,8 @@ import pers.adlered.picuang.access.HttpOrHttpsAccess;
 import pers.adlered.picuang.log.Logger;
 import pers.adlered.picuang.prop.Prop;
 import pers.adlered.picuang.result.Result;
+import pers.adlered.picuang.tool.FileUtil;
 import pers.adlered.picuang.tool.IPUtil;
-import pers.adlered.picuang.tool.ToolBox;
 import pers.adlered.picuang.tool.double_keys.main.DoubleKeys;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
@@ -26,6 +25,9 @@ import java.util.regex.Pattern;
 
 @Controller
 public class UploadController {
+
+    private static final String URL_SEPARATOR = "/";
+
     public static SimpleCurrentLimiter uploadLimiter = new SimpleCurrentLimiter(1, 1);
     public static SimpleCurrentLimiter cloneLimiter = new SimpleCurrentLimiter(3, 1);
 
@@ -61,25 +63,18 @@ public class UploadController {
             }
             //是否是图片格式
             String filename = file.getOriginalFilename();
-            String suffixName = ToolBox.getSuffixName(filename);
-            Logger.log("SuffixName: " + suffixName);
-            if (ToolBox.isPic(suffixName)) {
-//                String time = ToolBox.getDirByTime();
-                File dest = ToolBox.generatePicFile(dir, filename, false);
+            if (FileUtil.isPic(filename)) {
+                File dest = FileUtil.generateFile(dir, filename, false);
                 result.setData(filename);
                 filename = dest.getName();
                 Logger.log("Saving into " + dest.getAbsolutePath());
-                if (!dest.getParentFile().exists()) {
-                    dest.getParentFile().mkdirs();
-                }
+                FileUtil.checkAndCreateDir(dest.getParentFile());
                 try {
                     file.transferTo(dest);
-                    String url = getDirPath(dir) + filename;
+                    String url = getCorrectDirPath(dir) + filename;
                     result.setCode(200);
                     result.setMsg(url);
-                    int count = Prop.imageUploadedCount();
-                    ++count;
-                    Prop.imageUploadedCount(count);
+                    Prop.imageUploadedCount(Prop.imageUploadedCount() + 1);
                     return result;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -135,18 +130,15 @@ public class UploadController {
             }
             File dest = null;
             try {
-                String suffixName = ToolBox.getSuffixName(url);
+                String suffixName = FileUtil.getExtension(url);
                 Logger.log("SuffixName: " + suffixName);
-                String time = ToolBox.getDirByTime();
-                if (ToolBox.isPic(suffixName)) {
-                    dest = ToolBox.generatePicFile(suffixName, dir, true);
+                if (FileUtil.isPic(suffixName)) {
+                    dest = FileUtil.generateFile(suffixName, dir, true);
                 } else {
-                    dest = ToolBox.generatePicFile(".png", dir, true);
+                    dest = FileUtil.generateFile(".png", dir, true);
                 }
                 Logger.log("Saving into " + dest.getAbsolutePath());
-                if (!dest.getParentFile().exists()) {
-                    dest.getParentFile().mkdirs();
-                }
+                FileUtil.checkAndCreateDir(dest.getParentFile());
                 FileOutputStream fileOutputStream = new FileOutputStream(dest);
                 BufferedInputStream bufferedInputStream = HttpOrHttpsAccess.post(url,
                         "",
@@ -161,13 +153,15 @@ public class UploadController {
                 bufferedInputStream.close();
                 Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
                 Matcher m = p.matcher(url);
-                m.find();
-                result.setData("From " + m.group());
-                result.setCode(200);
-                result.setMsg(getDirPath(dir) + dest.getName());
-                int count = Prop.imageUploadedCount();
-                ++count;
-                Prop.imageUploadedCount(count);
+                if (m.find()) {
+                    result.setData("From " + m.group());
+                    result.setCode(200);
+                    result.setMsg(getCorrectDirPath(dir) + dest.getName());
+                    Prop.imageUploadedCount(Prop.imageUploadedCount() + 1);
+                } else {
+                    result.setData("正则匹配失败");
+                    result.setCode(400);
+                }
                 return result;
             } catch (Exception e) {
                 // 出错时删除建立的文件，以防止无效图片过多产生
@@ -193,13 +187,13 @@ public class UploadController {
         }
     }
 
-    String getDirPath(String dir) {
-        if (!Prop.customSavePath) {
-            return "/uploadImages/";
+    String getCorrectDirPath(String dir) {
+        if (Prop.customSavePath) {
+            if (dir == null || dir.isEmpty()) {
+                return URL_SEPARATOR;
+            }
+            return URL_SEPARATOR + dir + URL_SEPARATOR;
         }
-        if (dir == null || dir.isEmpty()) {
-            return "/";
-        }
-        return "/" + dir + "/";
+        return "/uploadImages/";
     }
 }

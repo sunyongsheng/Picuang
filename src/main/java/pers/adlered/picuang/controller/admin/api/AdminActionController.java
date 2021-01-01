@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pers.adlered.picuang.prop.Prop;
 import pers.adlered.picuang.result.Result;
-import pers.adlered.picuang.tool.ToolBox;
 
 import javax.servlet.http.HttpSession;
 
@@ -18,7 +17,7 @@ import javax.servlet.http.HttpSession;
  * @date : 2019-11-07 17:16
  **/
 @Controller
-public class AdminAction {
+public class AdminActionController {
     /**
      * 检测管理员密码是否已经设定
      * @return
@@ -32,13 +31,13 @@ public class AdminAction {
         try {
             if (Prop.password().isEmpty()) {
                 result.setCode(500);
-                result.setData(ToolBox.getINIDir());
+                result.setData(Prop.getConfigPath());
             } else {
                 result.setCode(200);
             }
         } catch (NullPointerException NPE) {
             result.setCode(500);
-            result.setData(ToolBox.getINIDir());
+            result.setData(Prop.getConfigPath());
         }
         return result;
     }
