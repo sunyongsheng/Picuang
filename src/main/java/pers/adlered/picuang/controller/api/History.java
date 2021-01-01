@@ -45,8 +45,7 @@ public class History {
                                 list.add(picProp);
                             }
                         }
-                    } catch (NullPointerException NPE) {
-                        continue;
+                    } catch (NullPointerException ignored) {
                     }
                 }
             }
@@ -85,7 +84,7 @@ public class History {
                     lists.add(i.getName());
                 }
             }
-        } catch (NullPointerException NPE) {
+        } catch (NullPointerException ignored) {
         }
         return lists;
     }
@@ -103,7 +102,7 @@ public class History {
                     lists.add(i.getName());
                 }
             }
-        } catch (NullPointerException NPE) {
+        } catch (NullPointerException ignored) {
         }
         return lists;
     }

@@ -21,7 +21,7 @@ public class Prop {
     // 版本号
     private static final String version = "V2.4";
 
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
     static {
         put();
@@ -47,10 +47,8 @@ public class Prop {
             properties.put("cloneLimit", "3:1");
             try {
                 properties.store(new BufferedOutputStream(new FileOutputStream("config.ini")), "Save Configs File.");
-            } catch (FileNotFoundException FNFE) {
-                FNFE.printStackTrace();
-            } catch (IOException IOE) {
-                IOE.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         } catch (IOException IOE) {
             IOE.printStackTrace();
@@ -66,7 +64,7 @@ public class Prop {
             properties.setProperty(key, value);
             Logger.log("[Prop] Set key '" + key + "' to value '" + value + "'");
             PrintWriter printWriter = new PrintWriter(new FileWriter("config.ini"), true);
-            Set set = properties.keySet();
+            Set<Object> set = properties.keySet();
             for (Object object : set) {
                 String k = (String) object;
                 String v = properties.getProperty(k);
@@ -89,7 +87,7 @@ public class Prop {
         // Reload properties
         try {
             properties.load(new BufferedInputStream(new FileInputStream("config.ini")));
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         // Upload limit
         try {
             String uploadLimitMaster = get("uploadLimit");
@@ -99,7 +97,7 @@ public class Prop {
                 UploadController.uploadLimiter = new SimpleCurrentLimiter(uploadLimitTime, uploadLimitTimes);
                 Logger.log("Upload limit custom setting loaded (" + uploadLimitTimes + " times in " + uploadLimitTime + " second) .");
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         // Clone limit
         try {
             String cloneLimitMaster = get("cloneLimit");
@@ -109,7 +107,7 @@ public class Prop {
                 UploadController.cloneLimiter = new SimpleCurrentLimiter(cloneLimitTime, cloneLimitTimes);
                 Logger.log("Clone limit custom setting loaded (" + cloneLimitTimes + " times in " + cloneLimitTime + " second) .");
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
     }
 
     public static void renew() {

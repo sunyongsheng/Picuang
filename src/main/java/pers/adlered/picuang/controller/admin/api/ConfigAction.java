@@ -34,7 +34,7 @@ public class ConfigAction {
         boolean logged = false;
         try {
             logged = Boolean.parseBoolean(session.getAttribute("admin").toString());
-        } catch (NullPointerException NPE) {
+        } catch (NullPointerException ignored) {
         }
         return logged;
     }
@@ -56,8 +56,8 @@ public class ConfigAction {
 
     @RequestMapping("/api/admin/setConf")
     @ResponseBody
-    public Result setConf(HttpSession session, String conf, String value) {
-        Result result = new Result();
+    public Result<String> setConf(HttpSession session, String conf, String value) {
+        Result<String> result = new Result<>();
         if (logged(session)) {
             Prop.set(conf, value);
             result.setCode(200);
@@ -78,8 +78,8 @@ public class ConfigAction {
 
     @RequestMapping("/api/admin/import")
     @ResponseBody
-    public Result importConfig(@PathVariable MultipartFile file, HttpSession session) {
-        Result result = new Result();
+    public Result<String> importConfig(@PathVariable MultipartFile file, HttpSession session) {
+        Result<String> result = new Result<>();
         try {
             String filename = file.getOriginalFilename();
             // 如果已登录 && 文件不为空 && 是ini文件
@@ -109,8 +109,8 @@ public class ConfigAction {
      */
     @RequestMapping("/api/admin/reload")
     @ResponseBody
-    public Result reloadConfig() {
-        Result result = new Result();
+    public Result<String> reloadConfig() {
+        Result<String> result = new Result<>();
         Prop.reload();
         result.setCode(200);
         return result;
@@ -118,8 +118,8 @@ public class ConfigAction {
 
     @RequestMapping("/api/admin/renew")
     @ResponseBody
-    public Result renewConfig(HttpSession session) {
-        Result result = new Result();
+    public Result<String> renewConfig(HttpSession session) {
+        Result<String> result = new Result<>();
         if (logged(session)) {
             Prop.renew();
             result.setCode(200);

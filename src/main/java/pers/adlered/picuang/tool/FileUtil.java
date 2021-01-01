@@ -1,7 +1,5 @@
 package pers.adlered.picuang.tool;
 
-import org.springframework.util.ResourceUtils;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
@@ -39,10 +37,8 @@ public class FileUtil {
                 os.write(buff, 0, i);
                 os.flush();
             }
-        } catch (FileNotFoundException FNFE) {
-            FNFE.printStackTrace();
-        } catch (IOException IOE) {
-            IOE.printStackTrace();
+        } catch (IOException e3) {
+            e3.printStackTrace();
         } finally {
             if (bis != null) {
                 try {

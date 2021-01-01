@@ -30,11 +30,11 @@ public class UploadController {
 
     @RequestMapping("/upload")
     @ResponseBody
-    public Result upload(@PathVariable MultipartFile file, HttpServletRequest request, HttpSession session) {
+    public Result<String> upload(@PathVariable MultipartFile file, HttpServletRequest request, HttpSession session) {
         synchronized (this) {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             boolean allowed = uploadLimiter.access(addr);
-            Result result = new Result();
+            Result<String> result = new Result<>();
             if (Prop.get("adminOnly").equals("on")) {
                 Logger.log("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
@@ -51,7 +51,7 @@ public class UploadController {
                     System.out.print(".");
                     Thread.sleep(100);
                 }
-            } catch (InterruptedException IE) {}
+            } catch (InterruptedException ignored) {}
             //是否上传了文件
             if (file.isEmpty()) {
                 result.setCode(406);
@@ -95,7 +95,7 @@ public class UploadController {
 
     @RequestMapping("/clone")
     @ResponseBody
-    public Result clone(String url, HttpServletRequest request, HttpSession session) {
+    public Result<String> clone(String url, HttpServletRequest request, HttpSession session) {
         synchronized (this) {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             // IP地址访问频率限制
@@ -106,8 +106,8 @@ public class UploadController {
                     System.out.print(".");
                     Thread.sleep(100);
                 }
-            } catch (InterruptedException IE) {}
-            Result result = new Result();
+            } catch (InterruptedException ignored) {}
+            Result<String> result = new Result<>();
             // 基于IP地址的重复克隆检测限制
             if (!DoubleKeys.check(addr, url)) {
                 result.setCode(401);
@@ -187,11 +187,10 @@ public class UploadController {
      * @return
      */
     public boolean logged(HttpSession session) {
-        boolean logged = false;
         try {
-            logged = Boolean.parseBoolean(session.getAttribute("admin").toString());
-        } catch (NullPointerException NPE) {
+            return Boolean.parseBoolean(session.getAttribute("admin").toString());
+        } catch (NullPointerException ignored) {
+            return false;
         }
-        return logged;
     }
 }

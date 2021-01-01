@@ -27,8 +27,8 @@ public class AdminAction {
      */
     @RequestMapping("/api/admin/init")
     @ResponseBody
-    public Result init() {
-        Result result = new Result();
+    public Result<String> init() {
+        Result<String> result = new Result<>();
         try {
             if (Prop.get("password").isEmpty()) {
                 result.setCode(500);
@@ -50,8 +50,8 @@ public class AdminAction {
      */
     @RequestMapping("/api/admin/check")
     @ResponseBody
-    public Result check(HttpSession session) {
-        Result result = new Result();
+    public Result<String> check(HttpSession session) {
+        Result<String> result = new Result<>();
         boolean logged = false;
         try {
             String admin = session.getAttribute("admin").toString();
@@ -77,8 +77,8 @@ public class AdminAction {
      */
     @RequestMapping(value = "/api/admin/login", method = RequestMethod.POST)
     @ResponseBody
-    public Result login(HttpSession session, String password) {
-        Result result = new Result();
+    public Result<String> login(HttpSession session, String password) {
+        Result<String> result = new Result<>();
         if (password.isEmpty()) {
             result.setCode(500);
             return result;
@@ -101,9 +101,9 @@ public class AdminAction {
      */
     @RequestMapping("/api/admin/logout")
     @ResponseBody
-    public Result logout(HttpSession session) {
+    public Result<String> logout(HttpSession session) {
         session.invalidate();
-        Result result = new Result();
+        Result<String> result = new Result<>();
         result.setCode(200);
         return result;
     }
