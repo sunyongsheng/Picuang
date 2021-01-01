@@ -5,7 +5,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pers.adlered.picuang.prop.Prop;
 
-
 /**
  * @author Aengus Sun (sys6511@126.com)
  * <p>
@@ -14,12 +13,13 @@ import pers.adlered.picuang.prop.Prop;
 @Configuration
 public class MvcConfiguration implements WebMvcConfigurer {
 
+    private static final String FILE_PROTOCOL = "file:///";
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:static/")
-                .addResourceLocations(Prop.savePath());
+                .addResourceLocations("classpath:static/", FILE_PROTOCOL + Prop.savePath());
 
 
 //                .setCacheControl(CacheControl.maxAge(7L, TimeUnit.DAYS))
