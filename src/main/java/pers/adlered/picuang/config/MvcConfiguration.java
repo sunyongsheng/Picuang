@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.tool.FileUtil;
 
 /**
  * @author Aengus Sun (sys6511@126.com)
@@ -19,7 +20,7 @@ public class MvcConfiguration implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:static/", FILE_PROTOCOL + Prop.savePath());
+                .addResourceLocations("classpath:static/", FILE_PROTOCOL + FileUtil.ensureSuffix(Prop.savePath()));
 
 
 //                .setCacheControl(CacheControl.maxAge(7L, TimeUnit.DAYS))

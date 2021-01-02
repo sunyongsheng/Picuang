@@ -16,13 +16,23 @@ public class FileUtil {
     public static final String FILE_SEPARATOR = File.separator;
 
     public static String ensurePrefix(String string) {
-        if (string == null || string.isEmpty()) return "";
+        if (string == null || string.isEmpty()) return FILE_SEPARATOR;
         return string.startsWith(FILE_SEPARATOR) ? string : FILE_SEPARATOR + string;
     }
 
-    public static String ensureSuffix(String string) {
+    public static String ensureNoPrefix(String string) {
         if (string == null || string.isEmpty()) return "";
+        return string.startsWith(FILE_SEPARATOR) ? string.substring(1) : string;
+    }
+
+    public static String ensureSuffix(String string) {
+        if (string == null || string.isEmpty()) return FILE_SEPARATOR;
         return string.endsWith(FILE_SEPARATOR) ? string : string + FILE_SEPARATOR;
+    }
+
+    public static String ensureNoSuffix(String string) {
+        if (string == null || string.isEmpty()) return "";
+        return string.endsWith(FILE_SEPARATOR) ? string.substring(0, string.length() - 1) : string;
     }
 
     public static String getExtension(String filename) {
@@ -64,12 +74,15 @@ public class FileUtil {
     }
 
     public static String getFileStoreDir(String dir) {
-        return Prop.savePath() + ensureSuffix(dir);
+        if (dir == null || dir.isEmpty()) {
+            return Prop.savePath() + ensureSuffix(Prop.defaultSaveDir());
+        }
+        return Prop.savePath() + ensureSuffix(ensurePrefix(dir));
     }
 
     public static File generateFile(String dir, String originalFileName, boolean forceUUID) {
         String path = getFileStoreDir(dir);
         String fileName = generateFilename(originalFileName, forceUUID);
-        return new File(path + fileName);
+        return new File(path, fileName);
     }
 }
