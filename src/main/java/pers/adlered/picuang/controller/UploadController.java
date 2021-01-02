@@ -71,9 +71,9 @@ public class UploadController {
                 FileUtil.checkAndCreateDir(dest.getParentFile());
                 try {
                     file.transferTo(dest);
-                    String url = getCorrectDirPath(dir) + filename;
+
                     result.setCode(200);
-                    result.setMsg(url);
+                    result.setMsg(getCorrectDirPath(dir) + filename);
                     Prop.imageUploadedCount(Prop.imageUploadedCount() + 1);
                     return result;
                 } catch (IOException e) {
@@ -187,10 +187,14 @@ public class UploadController {
         }
     }
 
+    /**
+     *
+     * @return 返回格式 /dir/
+     */
     String getCorrectDirPath(String dir) {
         if (Prop.customSavePath) {
             if (dir == null || dir.isEmpty()) {
-                return URL_SEPARATOR;
+                return Prop.defaultSaveDir() + URL_SEPARATOR;
             }
             return URL_SEPARATOR + dir + URL_SEPARATOR;
         }

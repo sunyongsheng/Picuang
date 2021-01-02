@@ -31,6 +31,10 @@ function showConfig() {
             .then(function (response) {
                 $("#imgNameStrategy-input").val(response.data)
             });
+        axios.get('/api/admin/getConf?conf=defaultSaveDir')
+            .then(function (response) {
+                $("#defaultSaveDir-input").val(response.data)
+            })
         // 二列
         axios.get('/api/admin/getConf?conf=adminOnly')
             .then(function (response) {
@@ -65,11 +69,15 @@ function getHelp(key) {
             "设置过小的数值会致使克隆速度变慢。<br>");
     } else if (key === "savePath") {
         tip("设置图片保存路径。<br>" +
-            "留空代表使用服务所在路径下的static/uploadImages/<br>")
+            "留空代表使用服务所在路径下的static/uploadImages/<br>");
     } else if (key === "imgNameStrategy") {
         tip("设置图片的URL地址<br>" +
-            "0代表使用UUID为图片生成名称。<br>" +
-            "1代表使用图片原本的名称<br>")
+            "0  代表使用UUID为图片生成名称。<br>" +
+            "1  代表使用图片原本的名称<br>");
+    } else if (key === "defaultSaveDir") {
+        tip("设置图片默认存储目录<br>" +
+            "根目录使用 / 表示<br>" +
+            "支持二级目录如 post/2020<br>");
     }
 }
 

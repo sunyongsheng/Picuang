@@ -130,14 +130,14 @@
                                 <div class='input-group'>
                                     <span class='input-group-addon' style='text-shadow: none !important;'>
                                         <span class="glyphicon glyphicon-open"></span>
-                                        图片保存路径
+                                        图片命名策略
                                     </span>
-                                    <input id='savePath-input' aria-label='...' class='form-control' type='text'>
+                                    <input id='imgNameStrategy-input' aria-label='...' class='form-control' type='text'>
                                     <span class='input-group-btn'>
-                                        <button type="button" class="btn btn-primary" aria-label="Help" onclick=getHelp("savePath")>
+                                        <button type="button" class="btn btn-primary" aria-label="Help" onclick=getHelp("imgNameStrategy")>
                                             <span class="glyphicon glyphicon-question-sign"></span>
                                         </button>
-                                        <button class='btn btn-primary' type='button' onclick=editConfig("savePath")>
+                                        <button class='btn btn-primary' type='button' onclick=editConfig("imgNameStrategy")>
                                             修改
                                         </button>
                                     </span>
@@ -147,14 +147,31 @@
                                 <div class='input-group'>
                                     <span class='input-group-addon' style='text-shadow: none !important;'>
                                         <span class="glyphicon glyphicon-open"></span>
-                                        图片命名策略
+                                        默认存储目录
                                     </span>
-                                    <input id='imgNameStrategy-input' aria-label='...' class='form-control' type='text'>
+                                    <input id="defaultSaveDir-input" aria-label='...' class='form-control' type='text'>
                                     <span class='input-group-btn'>
-                                        <button type="button" class="btn btn-primary" aria-label="Help" onclick=getHelp("imgNameStrategy")>
+                                        <button type="button" class="btn btn-primary" aria-label="Help" onclick=getHelp("defaultSaveDir")>
                                             <span class="glyphicon glyphicon-question-sign"></span>
                                         </button>
-                                        <button class='btn btn-primary' type='button' onclick=editConfig("imgNameStrategy")>
+                                        <button class='btn btn-primary' type='button' onclick=editConfig("defaultSaveDir")>
+                                            修改
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class='col-lg-12'>
+                                <div class='input-group'>
+                                    <span class='input-group-addon' style='text-shadow: none !important;'>
+                                        <span class="glyphicon glyphicon-open"></span>
+                                        图片保存本地路径
+                                    </span>
+                                    <input id='savePath-input' aria-label='...' class='form-control' type='text'>
+                                    <span class='input-group-btn'>
+                                        <button type="button" class="btn btn-primary" aria-label="Help" onclick=getHelp("savePath")>
+                                            <span class="glyphicon glyphicon-question-sign"></span>
+                                        </button>
+                                        <button class='btn btn-primary' type='button' onclick=editConfig("savePath")>
                                             修改
                                         </button>
                                     </span>

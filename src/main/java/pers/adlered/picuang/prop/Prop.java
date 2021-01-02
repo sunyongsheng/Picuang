@@ -31,6 +31,7 @@ public class Prop {
     public static final String CONFIG_KEY_CLONE_LIMIT = "cloneLimit";
     public static final String CONFIG_KEY_SAVE_PATH = "savePath";
     public static final String CONFIG_KEY_IMG_NAME_STRATEGY = "imgNameStrategy";
+    public static final String CONFIG_KEY_DEFAULT_SAVE_DIR = "defaultSaveDir";
 
     // 版本号
     private static final String version = "V2.4";
@@ -64,6 +65,7 @@ public class Prop {
             properties.put(CONFIG_KEY_CLONE_LIMIT, "3:1");
             properties.put(CONFIG_KEY_SAVE_PATH, "");
             properties.put(CONFIG_KEY_IMG_NAME_STRATEGY, "0");
+            properties.put(CONFIG_KEY_DEFAULT_SAVE_DIR, "/");
 
             try {
                 properties.store(new BufferedOutputStream(new FileOutputStream(CONFIG_FILENAME)), "Save Configs File.");
@@ -155,14 +157,17 @@ public class Prop {
         return Prop.get(CONFIG_KEY_PASSWORD);
     }
 
+    /**
+     * @return 返回格式 /savePath
+     */
     public static String savePath() {
         String config = get(CONFIG_KEY_SAVE_PATH);
         customSavePath = true;
         if (config == null || config.isEmpty()) {
             customSavePath = false;
-            config = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/uploadImages/";
+            config = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/uploadImages";
         }
-        return FileUtil.ensureSuffix(config);
+        return FileUtil.ensureNoSuffix(config);
     }
 
     public static int imgPathStrategy() {
@@ -171,5 +176,12 @@ public class Prop {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    /**
+     * @return 返回格式 /dir
+     */
+    public static String defaultSaveDir() {
+        return FileUtil.ensurePrefix(FileUtil.ensureNoSuffix(get(CONFIG_KEY_DEFAULT_SAVE_DIR)));
     }
 }
