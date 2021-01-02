@@ -9,51 +9,27 @@ function showConfig() {
         // 一列
         axios.get('/api/admin/getConf?conf=imageUploadedCount')
             .then(function (response) {
-                $("#config-row").prepend("<div class='col-lg-6'>" +
-                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-globe\"></span>" +
-                    " 存储图片数量</span><input id='imageUploadedCount-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
-                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"imageUploadedCount\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
-                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"imageUploadedCount\")'>修改</button></span></div></div>");
+                $("#imageUploadedCount-input").val(response.data)
             });
         axios.get('/api/admin/getConf?conf=password')
             .then(function (response) {
-                $("#config-row").prepend("<div class='col-lg-6'>" +
-                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-user\"></span>" +
-                    " 后台管理密码</span><input id='password-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
-                    "<button type=\"button\" class=\"btn btn-primary disabled\" aria-label=\"Help\" onclick='getHelp(\"password\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
-                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"password\")'>修改</button></span></div></div>");
+                $("#password-input").val(response.data)
             });
         axios.get('/api/admin/getConf?conf=cloneLimit')
             .then(function (response) {
-                $("#config-row").prepend("<div class='col-lg-6'>" +
-                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-cutlery\"></span>" +
-                    " 克隆频率限制</span><input id='cloneLimit-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
-                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"cloneLimit\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
-                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"cloneLimit\")'>修改</button></span></div></div>");
+                $("#cloneLimit-input").val(response.data)
             });
         axios.get('/api/admin/getConf?conf=uploadLimit')
             .then(function (response) {
-                $("#config-row").prepend("<div class='col-lg-6'>" +
-                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-open\"></span>" +
-                    " 上传频率限制</span><input id='uploadLimit-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
-                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"uploadLimit\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
-                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"uploadLimit\")'>修改</button></span></div></div>");
+                $("#uploadLimit-input").val(response.data)
             });
         axios.get('/api/admin/getConf?conf=savePath')
             .then(function (response) {
-                $("#config-row").prepend("<div class='col-lg-6'>" +
-                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-open\"></span>" +
-                    " 图片保存路径</span><input id='savePath-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
-                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"savePath\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
-                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"savePath\")'>修改</button></span></div></div>");
+                $("#savePath-input").val(response.data)
             });
         axios.get('/api/admin/getConf?conf=imgNameStrategy')
             .then(function (response) {
-                $("#config-row").prepend("<div class='col-lg-6'>" +
-                    "<div class='input-group'><span class='input-group-addon' style='text-shadow: none !important;'><span class=\"glyphicon glyphicon-open\"></span>" +
-                    " 图片命名策略</span><input id='imgNameStrategy-input' aria-label='...' class='form-control' type='text' value='" + response.data + "'><span class='input-group-btn'>" +
-                    "<button type=\"button\" class=\"btn btn-primary\" aria-label=\"Help\" onclick='getHelp(\"imgNameStrategy\")'><span class=\"glyphicon glyphicon-question-sign\"></span></button>" +
-                    "<button class='btn btn-primary' type='button' onclick='editConfig(\"imgNameStrategy\")'>修改</button></span></div></div>");
+                $("#imgNameStrategy-input").val(response.data)
             });
         // 二列
         axios.get('/api/admin/getConf?conf=adminOnly')
