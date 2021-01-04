@@ -5,11 +5,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pers.adlered.picuang.controller.api.bean.PicProp;
 import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.tool.DateFormatter;
+import pers.adlered.picuang.tool.FileUtil;
 import pers.adlered.picuang.tool.IPUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,94 +25,105 @@ import java.util.List;
  **/
 @Controller
 public class HistoryController {
-    @RequestMapping("/api/list")
-    @ResponseBody
-    public List<PicProp> list(HttpServletRequest request, String year, String month, String day) {
-        List<PicProp> list = new ArrayList<>();
-        File file = new File(getHome(request) + year + "/" + month + "/" + day + "/");
-        File[] hour = file.listFiles();
-        for (File i : hour) {
-            if (i.isDirectory()) {
-                String dir = getHome(request) + year + "/" + month + "/" + day + "/" + i.getName() + "/";
-                File[] minute = new File(dir).listFiles();
-                for (File j : minute) {
-                    String filesDir = dir + j.getName() + "/";
-                    File[] files = new File(filesDir).listFiles();
-                    try {
-                        for (File k : files) {
-                            if (k.isFile()) {
-                                PicProp picProp = new PicProp();
-                                picProp.setTime(i.getName() + ":" + j.getName());
-                                picProp.setFilename(k.getName());
-                                picProp.setPath("/uploadImages/" + IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/") + "/" + year + "/" + month + "/" + day + "/" + i.getName() + "/" + j.getName() + "/" + k.getName());
-                                picProp.setIp(IPUtil.getIpAddr(request));
-                                list.add(picProp);
-                            }
-                        }
-                    } catch (NullPointerException ignored) {
-                    }
-                }
-            }
-        }
-        return list;
-    }
-
-    @RequestMapping("/api/day")
-    @ResponseBody
-    public List<String> day(HttpServletRequest request, String year, String month) {
-        StringBuilder sb = new StringBuilder();
-        File file = new File(getHome(request) + year + "/" + month + "/");
-        File[] list = file.listFiles();
-        List<String> lists = new ArrayList<>();
-        try {
-            for (File i : list) {
-                if (i.isDirectory()) {
-                    lists.add(i.getName());
-                }
-            }
-        } catch (NullPointerException NPE) {
-        }
-        return lists;
-    }
-
-    @RequestMapping("/api/month")
-    @ResponseBody
-    public List<String> month(HttpServletRequest request, String year) {
-        StringBuilder sb = new StringBuilder();
-        File file = new File(getHome(request) + year + "/");
-        File[] list = file.listFiles();
-        List<String> lists = new ArrayList<>();
-        try {
-            for (File i : list) {
-                if (i.isDirectory()) {
-                    lists.add(i.getName());
-                }
-            }
-        } catch (NullPointerException ignored) {
-        }
-        return lists;
-    }
-
-    @RequestMapping("/api/year")
-    @ResponseBody
-    public List<String> year(HttpServletRequest request) {
-        StringBuilder sb = new StringBuilder();
-        File file = new File(getHome(request));
-        File[] list = file.listFiles();
-        List<String> lists = new ArrayList<>();
-        try {
-            for (File i : list) {
-                if (i.isDirectory()) {
-                    lists.add(i.getName());
-                }
-            }
-        } catch (NullPointerException ignored) {
-        }
-        return lists;
-    }
-
-    private String getHome(HttpServletRequest request) {
-        String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
-        return Prop.savePath();
-    }
+//    @RequestMapping("/api/list")
+//    @ResponseBody
+//    public List<PicProp> list(HttpServletRequest request, String year, String month, String day) {
+//        List<PicProp> list = new ArrayList<>();
+//        File file = new File(getHome());
+//        Date curr = new Calendar.Builder()
+//                .setDate(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day))
+//                .build().getTime();
+//        Date next = new Calendar.Builder()
+//                .setDate(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day + 1))
+//                .build().getTime();
+//        try {
+//            listFiles(list, file, curr, next, request);
+//        } catch (NullPointerException ignored) {
+//        }
+//        return list;
+//    }
+//
+//    private void listFiles(List<PicProp> list, File root, Date curr, Date next, HttpServletRequest request) {
+//        Date date = new Date(root.lastModified());
+//        if (date.before(curr) || date.after(next)) return;
+//        if (root.isDirectory() && root.listFiles() != null) {
+//            for (File f : root.listFiles()) {
+//                if (f.isFile()) {
+//                    PicProp picProp = new PicProp();
+//                    picProp.setTime(DateFormatter.hourColonMinFormat(new Date(f.lastModified())));
+//                    picProp.setFilename(f.getName());
+//                    picProp.setPath(f.getAbsolutePath().substring(Prop.savePath().length() - 1));
+//                    picProp.setIp(IPUtil.getIpAddr(request));
+//                    list.add(picProp);
+//                } else {
+//                    listFiles(list, f, curr, next, request);
+//                }
+//            }
+//        } else if (root.isFile()) {
+//            PicProp picProp = new PicProp();
+//            picProp.setTime(DateFormatter.hourColonMinFormat(new Date(root.lastModified())));
+//            picProp.setFilename(root.getName());
+//            picProp.setPath(root.getAbsolutePath().substring(Prop.savePath().length() - 1));
+//            picProp.setIp(IPUtil.getIpAddr(request));
+//            list.add(picProp);
+//        }
+//    }
+//
+//    @RequestMapping("/api/day")
+//    @ResponseBody
+//    public List<String> day(String year, String month) {
+//        StringBuilder sb = new StringBuilder();
+//        File file = new File(getHome() + year + "/" + month + "/");
+//        File[] list = file.listFiles();
+//        List<String> lists = new ArrayList<>();
+//        try {
+//            for (File i : list) {
+//                if (i.isDirectory()) {
+//                    lists.add(i.getName());
+//                }
+//            }
+//        } catch (NullPointerException NPE) {
+//        }
+//        return lists;
+//    }
+//
+//    @RequestMapping("/api/month")
+//    @ResponseBody
+//    public List<String> month(String year) {
+//        StringBuilder sb = new StringBuilder();
+//        File file = new File(getHome() + year + "/");
+//        File[] list = file.listFiles();
+//        List<String> lists = new ArrayList<>();
+//        try {
+//            for (File i : list) {
+//                if (i.isDirectory()) {
+//                    lists.add(i.getName());
+//                }
+//            }
+//        } catch (NullPointerException ignored) {
+//        }
+//        return lists;
+//    }
+//
+//    @RequestMapping("/api/year")
+//    @ResponseBody
+//    public List<String> year() {
+//        StringBuilder sb = new StringBuilder();
+//        File file = new File(getHome());
+//        File[] list = file.listFiles();
+//        List<String> lists = new ArrayList<>();
+//        try {
+//            for (File i : list) {
+//                if (i.isDirectory()) {
+//                    lists.add(i.getName());
+//                }
+//            }
+//        } catch (NullPointerException ignored) {
+//        }
+//        return lists;
+//    }
+//
+//    private String getHome() {
+//        return FileUtil.ensureSuffix(Prop.savePath());
+//    }
 }
