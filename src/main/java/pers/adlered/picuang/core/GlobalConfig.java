@@ -112,7 +112,8 @@ public class GlobalConfig {
         // Reload properties
         try {
             properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         // Upload limit
         try {
             String uploadLimitMaster = get(CONFIG_KEY_UPLOAD_LIMIT);
@@ -120,9 +121,10 @@ public class GlobalConfig {
                 int uploadLimitTime = Integer.parseInt(uploadLimitMaster.split(":")[0]);
                 int uploadLimitTimes = Integer.parseInt(uploadLimitMaster.split(":")[1]);
                 UploadController.uploadLimiter = new SimpleCurrentLimiter(uploadLimitTime, uploadLimitTimes);
-                logger.debug("Upload limit custom setting loaded (" + uploadLimitTimes + " times in " + uploadLimitTime + " second) .");
+                logger.debug("Upload limit custom setting loaded ( {} times in {} second ).", uploadLimitTimes, uploadLimitTime);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         // Clone limit
         try {
             String cloneLimitMaster = get(CONFIG_KEY_CLONE_LIMIT);
@@ -130,9 +132,10 @@ public class GlobalConfig {
                 int cloneLimitTime = Integer.parseInt(cloneLimitMaster.split(":")[0]);
                 int cloneLimitTimes = Integer.parseInt(cloneLimitMaster.split(":")[1]);
                 UploadController.cloneLimiter = new SimpleCurrentLimiter(cloneLimitTime, cloneLimitTimes);
-                logger.debug("Clone limit custom setting loaded (" + cloneLimitTimes + " times in " + cloneLimitTime + " second) .");
+                logger.debug("Clone limit custom setting loaded ( {} times in {} second ).", cloneLimitTimes, cloneLimitTime);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public static void renew() {
@@ -145,19 +148,19 @@ public class GlobalConfig {
     }
 
     public static boolean adminOnly() {
-        return GlobalConfig.get(CONFIG_KEY_ADMIN_ONLY).equals("on");
+        return get(CONFIG_KEY_ADMIN_ONLY).equals("on");
     }
 
     public static int imageUploadedCount() {
-        return Integer.parseInt(GlobalConfig.get(CONFIG_KEY_IMAGE_UPLOADED_COUNT));
+        return Integer.parseInt(get(CONFIG_KEY_IMAGE_UPLOADED_COUNT));
     }
 
     public static void imageUploadedCount(int value) {
-        GlobalConfig.set(CONFIG_KEY_IMAGE_UPLOADED_COUNT, String.valueOf(value));
+        set(CONFIG_KEY_IMAGE_UPLOADED_COUNT, String.valueOf(value));
     }
 
     public static String password() {
-        return GlobalConfig.get(CONFIG_KEY_PASSWORD);
+        return get(CONFIG_KEY_PASSWORD);
     }
 
     /**
