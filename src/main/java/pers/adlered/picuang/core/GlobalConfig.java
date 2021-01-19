@@ -1,9 +1,10 @@
 package pers.adlered.picuang.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import pers.adlered.picuang.controller.UploadController;
-import pers.adlered.picuang.log.Logger;
 import pers.adlered.picuang.tool.FileUtil;
 import pers.adlered.limiter.main.SimpleCurrentLimiter;
 
@@ -20,6 +21,8 @@ import java.util.Set;
  **/
 @Component
 public class GlobalConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalConfig.class);
 
     public static final String CONFIG_FILENAME = "config.ini";
 
@@ -42,7 +45,7 @@ public class GlobalConfig {
 
     static {
         init();
-        Logger.log("Properties loaded.");
+        logger.debug("Properties loaded.");
         reload();
     }
 
@@ -55,7 +58,7 @@ public class GlobalConfig {
             properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
             savePath();
         } catch (FileNotFoundException e) {
-            Logger.log("Generating new profile...");
+            logger.debug("Generating new profile...");
 
             properties.put(CONFIG_KEY_IMAGE_UPLOADED_COUNT, "0");
             properties.put(CONFIG_KEY_VERSION, version);
@@ -84,7 +87,7 @@ public class GlobalConfig {
     public static void set(String key, String value) {
         try {
             properties.setProperty(key, value);
-            Logger.log("[Prop] Set key '" + key + "' to value '" + value + "'");
+            logger.debug("[Prop] Set key '" + key + "' to value '" + value + "'");
             PrintWriter printWriter = new PrintWriter(new FileWriter(CONFIG_FILENAME), true);
             Set<Object> set = properties.keySet();
             for (Object object : set) {
@@ -105,7 +108,7 @@ public class GlobalConfig {
     }
 
     public static void reload() {
-        Logger.log("Reloading profile...");
+        logger.debug("Reloading profile...");
         // Reload properties
         try {
             properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILENAME)));
@@ -117,7 +120,7 @@ public class GlobalConfig {
                 int uploadLimitTime = Integer.parseInt(uploadLimitMaster.split(":")[0]);
                 int uploadLimitTimes = Integer.parseInt(uploadLimitMaster.split(":")[1]);
                 UploadController.uploadLimiter = new SimpleCurrentLimiter(uploadLimitTime, uploadLimitTimes);
-                Logger.log("Upload limit custom setting loaded (" + uploadLimitTimes + " times in " + uploadLimitTime + " second) .");
+                logger.debug("Upload limit custom setting loaded (" + uploadLimitTimes + " times in " + uploadLimitTime + " second) .");
             }
         } catch (Exception ignored) {}
         // Clone limit
@@ -127,7 +130,7 @@ public class GlobalConfig {
                 int cloneLimitTime = Integer.parseInt(cloneLimitMaster.split(":")[0]);
                 int cloneLimitTimes = Integer.parseInt(cloneLimitMaster.split(":")[1]);
                 UploadController.cloneLimiter = new SimpleCurrentLimiter(cloneLimitTime, cloneLimitTimes);
-                Logger.log("Clone limit custom setting loaded (" + cloneLimitTimes + " times in " + cloneLimitTime + " second) .");
+                logger.debug("Clone limit custom setting loaded (" + cloneLimitTimes + " times in " + cloneLimitTime + " second) .");
             }
         } catch (Exception ignored) {}
     }

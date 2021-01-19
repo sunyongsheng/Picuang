@@ -1,6 +1,7 @@
 package pers.adlered.picuang.tool;
 
-import pers.adlered.picuang.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pers.adlered.picuang.core.GlobalConfig;
 
 import java.io.File;
@@ -12,6 +13,8 @@ import java.util.UUID;
  * date 2021/1/1
  */
 public class FileUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     public static final String FILE_SEPARATOR = File.separator;
 
@@ -68,7 +71,7 @@ public class FileUtil {
     public static void checkAndCreateDir(File dir) {
         if (!dir.exists()) {
             if (!dir.mkdir()) {
-                Logger.log("创建目录失败: " + dir);
+                logger.error("创建目录失败: " + dir);
             }
         }
     }

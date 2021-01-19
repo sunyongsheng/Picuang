@@ -1,11 +1,12 @@
 package pers.adlered.picuang.controller.admin.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import pers.adlered.picuang.log.Logger;
 import pers.adlered.picuang.core.GlobalConfig;
 import pers.adlered.picuang.result.Result;
 import pers.adlered.picuang.tool.DownloadUtil;
@@ -23,6 +24,9 @@ import java.io.File;
  **/
 @Controller
 public class ConfigActionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConfigActionController.class);
+
     /**
      * 检查管理员是否已登录
      *
@@ -87,7 +91,7 @@ public class ConfigActionController {
                 config.renameTo(new File("config.ini.backup"));
                 File newConfig = new File(config.getAbsolutePath());
                 file.transferTo(newConfig);
-                Logger.log(newConfig.getPath());
+                logger.info(newConfig.getPath());
                 GlobalConfig.reload();
                 result.setCode(200);
             } else {

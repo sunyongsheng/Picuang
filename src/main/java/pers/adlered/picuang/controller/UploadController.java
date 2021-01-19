@@ -1,12 +1,13 @@
 package pers.adlered.picuang.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.access.HttpOrHttpsAccess;
-import pers.adlered.picuang.log.Logger;
 import pers.adlered.picuang.core.GlobalConfig;
 import pers.adlered.picuang.result.Result;
 import pers.adlered.picuang.tool.FileUtil;
@@ -26,6 +27,8 @@ import java.util.regex.Pattern;
 @Controller
 public class UploadController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UploadController.class);
+
     private static final String URL_SEPARATOR = "/";
 
     public static SimpleCurrentLimiter uploadLimiter = new SimpleCurrentLimiter(1, 1);
@@ -40,14 +43,14 @@ public class UploadController {
             boolean allowed = uploadLimiter.access(addr);
             Result<String> result = new Result<>();
             if (GlobalConfig.adminOnly()) {
-                Logger.log("AdminOnly mode is on! Checking user's permission...");
+                logger.debug("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
-                    Logger.log("User not logged! Uploading terminated.");
+                    logger.error("User not logged! Uploading terminated.");
                     result.setCode(401);
                     result.setMsg("管理员禁止了普通用户上传文件！");
                     return result;
                 }
-                Logger.log("Admin is uploading...");
+                logger.info("Admin is uploading...");
             }
             try {
                 while (!allowed) {
@@ -67,7 +70,7 @@ public class UploadController {
                 File dest = FileUtil.generateFile(dir, filename, false);
                 result.setData(filename);
                 filename = dest.getName();
-                Logger.log("Saving into " + dest.getAbsolutePath());
+                logger.debug("Saving into " + dest.getAbsolutePath());
                 FileUtil.checkAndCreateDir(dest.getParentFile());
                 try {
                     file.transferTo(dest);
@@ -112,14 +115,14 @@ public class UploadController {
                 return result;
             }
             if (GlobalConfig.adminOnly()) {
-                Logger.log("AdminOnly mode is on! Checking user's permission...");
+                logger.debug("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
-                    Logger.log("User not logged! Uploading terminated.");
+                    logger.error("User not logged! Uploading terminated.");
                     result.setCode(401);
                     result.setMsg("管理员禁止了普通用户上传文件！");
                     return result;
                 }
-                Logger.log("Admin is uploading...");
+                logger.debug("Admin is uploading...");
             }
             String regex = "(http(s)?://)?(localhost|(127|192|172|10)\\.).*";
             Matcher matcher = Pattern.compile(regex).matcher(url);
@@ -131,13 +134,13 @@ public class UploadController {
             File dest = null;
             try {
                 String suffixName = FileUtil.getExtension(url);
-                Logger.log("SuffixName: " + suffixName);
+                logger.info("SuffixName: " + suffixName);
                 if (FileUtil.isPic(suffixName)) {
                     dest = FileUtil.generateFile(suffixName, dir, true);
                 } else {
                     dest = FileUtil.generateFile(".png", dir, true);
                 }
-                Logger.log("Saving into " + dest.getAbsolutePath());
+                logger.debug("Saving into " + dest.getAbsolutePath());
                 FileUtil.checkAndCreateDir(dest.getParentFile());
                 FileOutputStream fileOutputStream = new FileOutputStream(dest);
                 BufferedInputStream bufferedInputStream = HttpOrHttpsAccess.post(url,
@@ -166,7 +169,7 @@ public class UploadController {
             } catch (Exception e) {
                 // 出错时删除建立的文件，以防止无效图片过多产生
                 if (dest != null) {
-                    Logger.log("An exception has caught, deleting picture cache...");
+                    logger.debug("An exception has caught, deleting picture cache...");
                     dest.delete();
                 }
                 result.setCode(500);
