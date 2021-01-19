@@ -1,20 +1,6 @@
 package pers.adlered.picuang.controller.api;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import pers.adlered.picuang.controller.api.bean.PicProp;
-import pers.adlered.picuang.prop.Prop;
-import pers.adlered.picuang.tool.DateFormatter;
-import pers.adlered.picuang.tool.FileUtil;
-import pers.adlered.picuang.tool.IPUtil;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * <h3>picuang</h3>

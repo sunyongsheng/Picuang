@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.access.HttpOrHttpsAccess;
 import pers.adlered.picuang.log.Logger;
-import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.core.GlobalConfig;
 import pers.adlered.picuang.result.Result;
 import pers.adlered.picuang.tool.FileUtil;
 import pers.adlered.picuang.tool.IPUtil;
-import pers.adlered.picuang.tool.double_keys.main.DoubleKeys;
-import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
+import pers.adlered.picuang.tool.DoubleKeys;
+import pers.adlered.limiter.main.SimpleCurrentLimiter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,7 +39,7 @@ public class UploadController {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             boolean allowed = uploadLimiter.access(addr);
             Result<String> result = new Result<>();
-            if (Prop.adminOnly()) {
+            if (GlobalConfig.adminOnly()) {
                 Logger.log("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
                     Logger.log("User not logged! Uploading terminated.");
@@ -74,7 +74,7 @@ public class UploadController {
 
                     result.setCode(200);
                     result.setMsg(getCorrectDirPath(dir) + filename);
-                    Prop.imageUploadedCount(Prop.imageUploadedCount() + 1);
+                    GlobalConfig.imageUploadedCount(GlobalConfig.imageUploadedCount() + 1);
                     return result;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -111,7 +111,7 @@ public class UploadController {
                 result.setMsg("请不要重复克隆同一张图片。你可以在右上方的\"历史\"选项找到你克隆过的图片！");
                 return result;
             }
-            if (Prop.adminOnly()) {
+            if (GlobalConfig.adminOnly()) {
                 Logger.log("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
                     Logger.log("User not logged! Uploading terminated.");
@@ -157,7 +157,7 @@ public class UploadController {
                     result.setData("From " + m.group());
                     result.setCode(200);
                     result.setMsg(getCorrectDirPath(dir) + dest.getName());
-                    Prop.imageUploadedCount(Prop.imageUploadedCount() + 1);
+                    GlobalConfig.imageUploadedCount(GlobalConfig.imageUploadedCount() + 1);
                 } else {
                     result.setData("正则匹配失败");
                     result.setCode(400);
@@ -192,9 +192,9 @@ public class UploadController {
      * @return 返回格式 /dir/
      */
     String getCorrectDirPath(String dir) {
-        if (Prop.customSavePath) {
+        if (GlobalConfig.customSavePath) {
             if (dir == null || dir.isEmpty()) {
-                return Prop.defaultSaveDir() + URL_SEPARATOR;
+                return GlobalConfig.defaultSaveDir() + URL_SEPARATOR;
             }
             return URL_SEPARATOR + dir + URL_SEPARATOR;
         }

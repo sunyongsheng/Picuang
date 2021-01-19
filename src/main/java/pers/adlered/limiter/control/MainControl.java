@@ -1,7 +1,7 @@
-package pers.adlered.simplecurrentlimiter.control;
+package pers.adlered.limiter.control;
 
-import pers.adlered.simplecurrentlimiter.cache.MainCache;
-import pers.adlered.simplecurrentlimiter.cache.pair.CachePair;
+import pers.adlered.limiter.cache.MainCache;
+import pers.adlered.limiter.cache.pair.CachePair;
 
 /**
  * <h3>SimpleCurrentLimiter</h3>

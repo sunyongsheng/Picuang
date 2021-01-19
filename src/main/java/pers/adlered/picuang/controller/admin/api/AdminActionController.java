@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.core.GlobalConfig;
 import pers.adlered.picuang.result.Result;
 
 import javax.servlet.http.HttpSession;
@@ -29,15 +29,15 @@ public class AdminActionController {
     public Result<String> init() {
         Result<String> result = new Result<>();
         try {
-            if (Prop.password().isEmpty()) {
+            if (GlobalConfig.password().isEmpty()) {
                 result.setCode(500);
-                result.setData(Prop.getConfigPath());
+                result.setData(GlobalConfig.getConfigPath());
             } else {
                 result.setCode(200);
             }
         } catch (NullPointerException NPE) {
             result.setCode(500);
-            result.setData(Prop.getConfigPath());
+            result.setData(GlobalConfig.getConfigPath());
         }
         return result;
     }
@@ -82,7 +82,7 @@ public class AdminActionController {
             result.setCode(500);
             return result;
         }
-        String truePassword = Prop.password();
+        String truePassword = GlobalConfig.password();
         if (truePassword.equals(password)) {
             session.setAttribute("admin", "true");
             result.setCode(200);

@@ -1,9 +1,9 @@
-package pers.adlered.picuang.tool.double_keys.main;
-
-import pers.adlered.picuang.tool.double_keys.storage.DoubleKeysStorage;
+package pers.adlered.picuang.tool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <h3>Picuang</h3>
@@ -47,5 +47,9 @@ public class DoubleKeys {
             // 第一次生成，直接返回true
             return true;
         }
+    }
+
+    static class DoubleKeysStorage {
+        public static Map<String, List<String>> keyMap = new HashMap<>();
     }
 }

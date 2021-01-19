@@ -1,6 +1,6 @@
-package pers.adlered.simplecurrentlimiter.main;
+package pers.adlered.limiter.main;
 
-import pers.adlered.simplecurrentlimiter.control.MainControl;
+import pers.adlered.limiter.control.MainControl;
 
 /**
  * <h3>SimpleCurrentLimiter</h3>

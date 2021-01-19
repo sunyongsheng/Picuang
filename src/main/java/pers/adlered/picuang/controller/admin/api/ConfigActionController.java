@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.log.Logger;
-import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.core.GlobalConfig;
 import pers.adlered.picuang.result.Result;
 import pers.adlered.picuang.tool.DownloadUtil;
 
@@ -42,11 +42,11 @@ public class ConfigActionController {
     @ResponseBody
     public String getConf(HttpSession session, String conf) {
         if (logged(session) || conf.equals("adminOnly")) {
-            String result = Prop.get(conf);
+            String result = GlobalConfig.get(conf);
             if (result != null) {
                 return result;
             } else {
-                return "找不到配置！如果你更新过Picuang，请备份并删除当前的config.ini文件（位于 " + Prop.getConfigPath() + " ），然后重启服务端或点击\"生成新配置文件\"按钮，使Picuang重新生成新的配置文件。";
+                return "找不到配置！如果你更新过Picuang，请备份并删除当前的config.ini文件（位于 " + GlobalConfig.getConfigPath() + " ），然后重启服务端或点击\"生成新配置文件\"按钮，使Picuang重新生成新的配置文件。";
             }
         } else {
             return "Permission denied";
@@ -58,7 +58,7 @@ public class ConfigActionController {
     public Result<String> setConf(HttpSession session, String conf, String value) {
         Result<String> result = new Result<>();
         if (logged(session)) {
-            Prop.set(conf, value);
+            GlobalConfig.set(conf, value);
             result.setCode(200);
         } else {
             result.setCode(500);
@@ -88,7 +88,7 @@ public class ConfigActionController {
                 File newConfig = new File(config.getAbsolutePath());
                 file.transferTo(newConfig);
                 Logger.log(newConfig.getPath());
-                Prop.reload();
+                GlobalConfig.reload();
                 result.setCode(200);
             } else {
                 result.setCode(500);
@@ -110,7 +110,7 @@ public class ConfigActionController {
     @ResponseBody
     public Result<String> reloadConfig() {
         Result<String> result = new Result<>();
-        Prop.reload();
+        GlobalConfig.reload();
         result.setCode(200);
         return result;
     }
@@ -120,7 +120,7 @@ public class ConfigActionController {
     public Result<String> renewConfig(HttpSession session) {
         Result<String> result = new Result<>();
         if (logged(session)) {
-            Prop.renew();
+            GlobalConfig.renew();
             result.setCode(200);
         } else {
             result.setCode(500);

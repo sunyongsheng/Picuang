@@ -3,7 +3,7 @@ package pers.adlered.picuang.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.core.GlobalConfig;
 import pers.adlered.picuang.tool.FileUtil;
 
 /**
@@ -20,7 +20,7 @@ public class MvcConfiguration implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:static/", FILE_PROTOCOL + FileUtil.ensureSuffix(Prop.savePath()));
+                .addResourceLocations("classpath:static/", FILE_PROTOCOL + FileUtil.ensureSuffix(GlobalConfig.savePath()));
 
 
 //                .setCacheControl(CacheControl.maxAge(7L, TimeUnit.DAYS))

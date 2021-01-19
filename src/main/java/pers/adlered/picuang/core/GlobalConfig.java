@@ -1,11 +1,11 @@
-package pers.adlered.picuang.prop;
+package pers.adlered.picuang.core;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import pers.adlered.picuang.controller.UploadController;
 import pers.adlered.picuang.log.Logger;
 import pers.adlered.picuang.tool.FileUtil;
-import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
+import pers.adlered.limiter.main.SimpleCurrentLimiter;
 
 import java.io.*;
 import java.util.Properties;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @date : 2019-11-06 21:29
  **/
 @Component
-public class Prop {
+public class GlobalConfig {
 
     public static final String CONFIG_FILENAME = "config.ini";
 
@@ -142,19 +142,19 @@ public class Prop {
     }
 
     public static boolean adminOnly() {
-        return Prop.get(CONFIG_KEY_ADMIN_ONLY).equals("on");
+        return GlobalConfig.get(CONFIG_KEY_ADMIN_ONLY).equals("on");
     }
 
     public static int imageUploadedCount() {
-        return Integer.parseInt(Prop.get(CONFIG_KEY_IMAGE_UPLOADED_COUNT));
+        return Integer.parseInt(GlobalConfig.get(CONFIG_KEY_IMAGE_UPLOADED_COUNT));
     }
 
     public static void imageUploadedCount(int value) {
-        Prop.set(CONFIG_KEY_IMAGE_UPLOADED_COUNT, String.valueOf(value));
+        GlobalConfig.set(CONFIG_KEY_IMAGE_UPLOADED_COUNT, String.valueOf(value));
     }
 
     public static String password() {
-        return Prop.get(CONFIG_KEY_PASSWORD);
+        return GlobalConfig.get(CONFIG_KEY_PASSWORD);
     }
 
     /**

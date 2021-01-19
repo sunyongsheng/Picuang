@@ -1,7 +1,7 @@
 package pers.adlered.picuang.tool;
 
 import pers.adlered.picuang.log.Logger;
-import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.core.GlobalConfig;
 
 import java.io.File;
 import java.util.UUID;
@@ -55,7 +55,7 @@ public class FileUtil {
     }
 
     public static String generateFilename(String originalName, boolean forceUUID) {
-        int strategy = Prop.imgPathStrategy();
+        int strategy = GlobalConfig.imgPathStrategy();
         if (forceUUID || strategy == 0) {
             String suffixName = getExtension(originalName);
             return UUID.randomUUID() + suffixName;
@@ -75,9 +75,9 @@ public class FileUtil {
 
     public static String getFileStoreDir(String dir) {
         if (dir == null || dir.isEmpty()) {
-            return Prop.savePath() + ensureSuffix(Prop.defaultSaveDir());
+            return GlobalConfig.savePath() + ensureSuffix(GlobalConfig.defaultSaveDir());
         }
-        return Prop.savePath() + ensureSuffix(ensurePrefix(dir));
+        return GlobalConfig.savePath() + ensureSuffix(ensurePrefix(dir));
     }
 
     public static File generateFile(String dir, String originalFileName, boolean forceUUID) {

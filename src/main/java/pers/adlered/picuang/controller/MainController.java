@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import pers.adlered.picuang.prop.Prop;
+import pers.adlered.picuang.core.GlobalConfig;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -19,7 +19,7 @@ public class MainController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView("index");
         // 图片总数计算
-        modelAndView.addObject("files", Prop.imageUploadedCount());
+        modelAndView.addObject("files", GlobalConfig.imageUploadedCount());
         // 剩余空间计算
         File diskPartition = new File("/");
         String freePartitionSpace = new DecimalFormat("#.00").format(diskPartition.getFreeSpace() / 1073741824);
@@ -27,7 +27,7 @@ public class MainController {
         // 限制文件大小
         modelAndView.addObject("limit", maxFileSize);
         // 版本
-        modelAndView.addObject("version", Prop.getVersion());
+        modelAndView.addObject("version", GlobalConfig.getVersion());
         return modelAndView;
     }
 
@@ -35,7 +35,7 @@ public class MainController {
     @ResponseBody
     public ModelAndView history() {
         ModelAndView modelAndView = new ModelAndView("historyController");
-        modelAndView.addObject("version", Prop.getVersion());
+        modelAndView.addObject("version", GlobalConfig.getVersion());
         return modelAndView;
     }
 }
