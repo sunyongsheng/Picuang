@@ -30,10 +30,8 @@ public class ConfigActionController {
     /**
      * 检查管理员是否已登录
      *
-     * @param session
-     * @return
      */
-    public boolean logged(HttpSession session) {
+    public boolean haveLogin(HttpSession session) {
         boolean logged = false;
         try {
             logged = Boolean.parseBoolean(session.getAttribute("admin").toString());
@@ -45,7 +43,7 @@ public class ConfigActionController {
     @RequestMapping("/api/admin/getConf")
     @ResponseBody
     public String getConf(HttpSession session, String conf) {
-        if (logged(session) || conf.equals("adminOnly")) {
+        if (haveLogin(session) || conf.equals(GlobalConfig.CONFIG_KEY_ADMIN_ONLY)) {
             String result = GlobalConfig.get(conf);
             if (result != null) {
                 return result;
@@ -61,7 +59,7 @@ public class ConfigActionController {
     @ResponseBody
     public Result<String> setConf(HttpSession session, String conf, String value) {
         Result<String> result = new Result<>();
-        if (logged(session)) {
+        if (haveLogin(session)) {
             GlobalConfig.set(conf, value);
             result.setCode(200);
         } else {
@@ -73,8 +71,8 @@ public class ConfigActionController {
     @RequestMapping("/api/admin/export")
     @ResponseBody
     public void exportConfig(HttpServletResponse response, HttpSession session) {
-        if (logged(session)) {
-            String fileName = "config.ini";
+        if (haveLogin(session)) {
+            String fileName = GlobalConfig.CONFIG_FILENAME;
             DownloadUtil.downloadFile(response, fileName);
         }
     }
@@ -86,9 +84,9 @@ public class ConfigActionController {
         try {
             String filename = file.getOriginalFilename();
             // 如果已登录 && 文件不为空 && 是ini文件
-            if (logged(session) && (!file.isEmpty()) && filename.matches(".*(\\.ini)$")) {
-                File config = new File("config.ini");
-                config.renameTo(new File("config.ini.backup"));
+            if (haveLogin(session) && (!file.isEmpty()) && filename.matches(".*(\\.ini)$")) {
+                File config = new File(GlobalConfig.CONFIG_FILENAME);
+                config.renameTo(new File(GlobalConfig.CONFIG_FILENAME + ".backup"));
                 File newConfig = new File(config.getAbsolutePath());
                 file.transferTo(newConfig);
                 logger.info(newConfig.getPath());
@@ -123,7 +121,7 @@ public class ConfigActionController {
     @ResponseBody
     public Result<String> renewConfig(HttpSession session) {
         Result<String> result = new Result<>();
-        if (logged(session)) {
+        if (haveLogin(session)) {
             GlobalConfig.renew();
             result.setCode(200);
         } else {
