@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.access.HttpOrHttpsAccess;
 import pers.adlered.picuang.core.GlobalConfig;
-import pers.adlered.picuang.result.Result;
+import pers.adlered.picuang.core.Response;
 import pers.adlered.picuang.tool.FileUtil;
 import pers.adlered.picuang.tool.IPUtil;
 import pers.adlered.picuang.tool.DoubleKeys;
@@ -36,19 +36,19 @@ public class UploadController {
 
     @RequestMapping("/upload")
     @ResponseBody
-    public Result<String> upload(@RequestParam MultipartFile file, @RequestParam String dir,
-                                 HttpServletRequest request, HttpSession session) {
+    public Response<String> upload(@RequestParam MultipartFile file, @RequestParam String dir,
+                                   HttpServletRequest request, HttpSession session) {
         synchronized (this) {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             boolean allowed = uploadLimiter.access(addr);
-            Result<String> result = new Result<>();
+            Response<String> response = new Response<>();
             if (GlobalConfig.adminOnly()) {
                 logger.debug("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
                     logger.error("User not logged! Uploading terminated.");
-                    result.setCode(401);
-                    result.setMsg("管理员禁止了普通用户上传文件！");
-                    return result;
+                    response.setCode(401);
+                    response.setMsg("管理员禁止了普通用户上传文件！");
+                    return response;
                 }
                 logger.info("Admin is uploading...");
             }
@@ -61,41 +61,41 @@ public class UploadController {
             } catch (InterruptedException ignored) {}
             //是否上传了文件
             if (file.isEmpty()) {
-                result.setCode(406);
-                return result;
+                response.setCode(406);
+                return response;
             }
             //是否是图片格式
             String filename = file.getOriginalFilename();
             if (FileUtil.isPic(filename)) {
                 File dest = FileUtil.generateFile(dir, filename, false);
-                result.setData(filename);
+                response.setData(filename);
                 filename = dest.getName();
                 logger.debug("Saving into " + dest.getAbsolutePath());
                 FileUtil.checkAndCreateDir(dest.getParentFile());
                 try {
                     file.transferTo(dest);
 
-                    result.setCode(200);
-                    result.setMsg(getCorrectDirPath(dir) + filename);
+                    response.setCode(200);
+                    response.setMsg(getCorrectDirPath(dir) + filename);
                     GlobalConfig.imageUploadedCount(GlobalConfig.imageUploadedCount() + 1);
-                    return result;
+                    return response;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                result.setCode(500);
-                result.setMsg("不是jpg/jpeg/png/svg/gif图片！");
-                return result;
+                response.setCode(500);
+                response.setMsg("不是jpg/jpeg/png/svg/gif图片！");
+                return response;
             }
-            result.setCode(500);
-            result.setMsg("未知错误。");
-            return result;
+            response.setCode(500);
+            response.setMsg("未知错误。");
+            return response;
         }
     }
 
     @RequestMapping("/clone")
     @ResponseBody
-    public Result<String> clone(String url, String dir, HttpServletRequest request, HttpSession session) {
+    public Response<String> clone(String url, String dir, HttpServletRequest request, HttpSession session) {
         synchronized (this) {
             String addr = IPUtil.getIpAddr(request).replaceAll("\\.", "/").replaceAll(":", "/");
             // IP地址访问频率限制
@@ -107,29 +107,29 @@ public class UploadController {
                     Thread.sleep(100);
                 }
             } catch (InterruptedException ignored) {}
-            Result<String> result = new Result<>();
+            Response<String> response = new Response<>();
             // 基于IP地址的重复克隆检测限制
             if (!DoubleKeys.check(addr, url)) {
-                result.setCode(401);
-                result.setMsg("请不要重复克隆同一张图片。你可以在右上方的\"历史\"选项找到你克隆过的图片！");
-                return result;
+                response.setCode(401);
+                response.setMsg("请不要重复克隆同一张图片。你可以在右上方的\"历史\"选项找到你克隆过的图片！");
+                return response;
             }
             if (GlobalConfig.adminOnly()) {
                 logger.debug("AdminOnly mode is on! Checking user's permission...");
                 if (!logged(session)) {
                     logger.error("User not logged! Uploading terminated.");
-                    result.setCode(401);
-                    result.setMsg("管理员禁止了普通用户上传文件！");
-                    return result;
+                    response.setCode(401);
+                    response.setMsg("管理员禁止了普通用户上传文件！");
+                    return response;
                 }
                 logger.debug("Admin is uploading...");
             }
             String regex = "(http(s)?://)?(localhost|(127|192|172|10)\\.).*";
             Matcher matcher = Pattern.compile(regex).matcher(url);
             if (matcher.matches()) {
-                result.setCode(401);
-                result.setMsg("Anti-SSRF系统检测到您输入了内网地址，请检查！");
-                return result;
+                response.setCode(401);
+                response.setMsg("Anti-SSRF系统检测到您输入了内网地址，请检查！");
+                return response;
             }
             File dest = null;
             try {
@@ -157,24 +157,24 @@ public class UploadController {
                 Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
                 Matcher m = p.matcher(url);
                 if (m.find()) {
-                    result.setData("From " + m.group());
-                    result.setCode(200);
-                    result.setMsg(getCorrectDirPath(dir) + dest.getName());
+                    response.setData("From " + m.group());
+                    response.setCode(200);
+                    response.setMsg(getCorrectDirPath(dir) + dest.getName());
                     GlobalConfig.imageUploadedCount(GlobalConfig.imageUploadedCount() + 1);
                 } else {
-                    result.setData("正则匹配失败");
-                    result.setCode(400);
+                    response.setData("正则匹配失败");
+                    response.setCode(400);
                 }
-                return result;
+                return response;
             } catch (Exception e) {
                 // 出错时删除建立的文件，以防止无效图片过多产生
                 if (dest != null) {
                     logger.debug("An exception has caught, deleting picture cache...");
                     dest.delete();
                 }
-                result.setCode(500);
-                result.setMsg(e.getClass().toGenericString().replaceAll("public class ", ""));
-                return result;
+                response.setCode(500);
+                response.setMsg(e.getClass().toGenericString().replaceAll("public class ", ""));
+                return response;
             }
         }
     }

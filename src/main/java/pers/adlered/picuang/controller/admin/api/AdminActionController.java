@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pers.adlered.picuang.core.GlobalConfig;
-import pers.adlered.picuang.result.Result;
+import pers.adlered.picuang.core.Response;
 
 import javax.servlet.http.HttpSession;
 
@@ -26,20 +26,20 @@ public class AdminActionController {
      */
     @RequestMapping("/api/admin/init")
     @ResponseBody
-    public Result<String> init() {
-        Result<String> result = new Result<>();
+    public Response<String> init() {
+        Response<String> response = new Response<>();
         try {
             if (GlobalConfig.password().isEmpty()) {
-                result.setCode(500);
-                result.setData(GlobalConfig.getConfigPath());
+                response.setCode(500);
+                response.setData(GlobalConfig.getConfigPath());
             } else {
-                result.setCode(200);
+                response.setCode(200);
             }
         } catch (NullPointerException NPE) {
-            result.setCode(500);
-            result.setData(GlobalConfig.getConfigPath());
+            response.setCode(500);
+            response.setData(GlobalConfig.getConfigPath());
         }
-        return result;
+        return response;
     }
 
     /**
@@ -49,8 +49,8 @@ public class AdminActionController {
      */
     @RequestMapping("/api/admin/check")
     @ResponseBody
-    public Result<String> check(HttpSession session) {
-        Result<String> result = new Result<>();
+    public Response<String> check(HttpSession session) {
+        Response<String> response = new Response<>();
         boolean logged = false;
         try {
             String admin = session.getAttribute("admin").toString();
@@ -58,11 +58,11 @@ public class AdminActionController {
         } catch (NullPointerException ignored) {
         }
         if (logged) {
-            result.setCode(200);
+            response.setCode(200);
         } else {
-            result.setCode(500);
+            response.setCode(500);
         }
-        return result;
+        return response;
     }
 
     /**
@@ -76,20 +76,20 @@ public class AdminActionController {
      */
     @RequestMapping(value = "/api/admin/login", method = RequestMethod.POST)
     @ResponseBody
-    public Result<String> login(HttpSession session, String password) {
-        Result<String> result = new Result<>();
+    public Response<String> login(HttpSession session, String password) {
+        Response<String> response = new Response<>();
         if (password.isEmpty()) {
-            result.setCode(500);
-            return result;
+            response.setCode(500);
+            return response;
         }
         String truePassword = GlobalConfig.password();
         if (truePassword.equals(password)) {
             session.setAttribute("admin", "true");
-            result.setCode(200);
+            response.setCode(200);
         } else {
-            result.setCode(500);
+            response.setCode(500);
         }
-        return result;
+        return response;
     }
 
     /**
@@ -100,10 +100,10 @@ public class AdminActionController {
      */
     @RequestMapping("/api/admin/logout")
     @ResponseBody
-    public Result<String> logout(HttpSession session) {
+    public Response<String> logout(HttpSession session) {
         session.invalidate();
-        Result<String> result = new Result<>();
-        result.setCode(200);
-        return result;
+        Response<String> response = new Response<>();
+        response.setCode(200);
+        return response;
     }
 }

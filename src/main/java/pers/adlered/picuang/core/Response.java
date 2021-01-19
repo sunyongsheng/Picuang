@@ -1,15 +1,15 @@
-package pers.adlered.picuang.result;
+package pers.adlered.picuang.core;
 
-public class Result<T> {
+public class Response<T> {
     private Integer code = 404;
     private String msg = "";
-    private T data = (T) "";
+    private T data;
 
-    public Result() {
+    public Response() {
         super();
     }
 
-    public Result(Integer code, String msg, T data) {
+    public Response(Integer code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
@@ -41,7 +41,7 @@ public class Result<T> {
 
     @Override
     public String toString() {
-        return "Result{" +
+        return "Response{" +
                 "code=" + code +
                 ", msg='" + msg + "'" +
                 ", data=" + data +

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import pers.adlered.picuang.core.GlobalConfig;
-import pers.adlered.picuang.result.Result;
+import pers.adlered.picuang.core.Response;
 import pers.adlered.picuang.tool.DownloadUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -57,15 +57,15 @@ public class ConfigActionController {
 
     @RequestMapping("/api/admin/setConf")
     @ResponseBody
-    public Result<String> setConf(HttpSession session, String conf, String value) {
-        Result<String> result = new Result<>();
+    public Response<String> setConf(HttpSession session, String conf, String value) {
+        Response<String> response = new Response<>();
         if (haveLogin(session)) {
             GlobalConfig.set(conf, value);
-            result.setCode(200);
+            response.setCode(200);
         } else {
-            result.setCode(500);
+            response.setCode(500);
         }
-        return result;
+        return response;
     }
 
     @RequestMapping("/api/admin/export")
@@ -79,8 +79,8 @@ public class ConfigActionController {
 
     @RequestMapping("/api/admin/import")
     @ResponseBody
-    public Result<String> importConfig(@PathVariable MultipartFile file, HttpSession session) {
-        Result<String> result = new Result<>();
+    public Response<String> importConfig(@PathVariable MultipartFile file, HttpSession session) {
+        Response<String> response = new Response<>();
         try {
             String filename = file.getOriginalFilename();
             // 如果已登录 && 文件不为空 && 是ini文件
@@ -91,15 +91,15 @@ public class ConfigActionController {
                 file.transferTo(newConfig);
                 logger.info(newConfig.getPath());
                 GlobalConfig.reload();
-                result.setCode(200);
+                response.setCode(200);
             } else {
-                result.setCode(500);
+                response.setCode(500);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            result.setCode(500);
+            response.setCode(500);
         }
-        return result;
+        return response;
     }
 
     /**
@@ -110,23 +110,23 @@ public class ConfigActionController {
      */
     @RequestMapping("/api/admin/reload")
     @ResponseBody
-    public Result<String> reloadConfig() {
-        Result<String> result = new Result<>();
+    public Response<String> reloadConfig() {
+        Response<String> response = new Response<>();
         GlobalConfig.reload();
-        result.setCode(200);
-        return result;
+        response.setCode(200);
+        return response;
     }
 
     @RequestMapping("/api/admin/renew")
     @ResponseBody
-    public Result<String> renewConfig(HttpSession session) {
-        Result<String> result = new Result<>();
+    public Response<String> renewConfig(HttpSession session) {
+        Response<String> response = new Response<>();
         if (haveLogin(session)) {
             GlobalConfig.renew();
-            result.setCode(200);
+            response.setCode(200);
         } else {
-            result.setCode(500);
+            response.setCode(500);
         }
-        return result;
+        return response;
     }
 }

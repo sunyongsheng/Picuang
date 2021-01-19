@@ -1,4 +1,4 @@
-package pers.adlered.picuang.controller.api.bean;
+package pers.adlered.picuang.model;
 
 /**
  * <h3>picuang</h3>
