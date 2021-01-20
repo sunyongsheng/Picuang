@@ -8,11 +8,11 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>pers.adlered.picuang</groupId>
-    <artifactId>picuang</artifactId>
+    <groupId>top.aengus.panther</groupId>
+    <artifactId>panther</artifactId>
     <version>0.0.1</version>
-    <name>picuang</name>
-    <description>Picture Chuang XD</description>
+    <name>panther</name>
+    <description>图床系统</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -38,6 +38,10 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -62,6 +66,10 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 
