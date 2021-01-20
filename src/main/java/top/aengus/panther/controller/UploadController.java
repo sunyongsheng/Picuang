@@ -2,6 +2,7 @@ package top.aengus.panther.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import top.aengus.panther.access.HttpOrHttpsAccess;
 import top.aengus.panther.core.GlobalConfig;
 import top.aengus.panther.core.Response;
+import top.aengus.panther.dao.ImageRepository;
+import top.aengus.panther.model.ImageModel;
+import top.aengus.panther.service.ImageService;
 import top.aengus.panther.tool.FileUtil;
 import top.aengus.panther.tool.IPUtil;
 import top.aengus.panther.tool.DoubleKeys;
@@ -33,6 +37,13 @@ public class UploadController {
 
     public static SimpleCurrentLimiter uploadLimiter = new SimpleCurrentLimiter(1, 1);
     public static SimpleCurrentLimiter cloneLimiter = new SimpleCurrentLimiter(3, 1);
+
+    private final ImageService imageService;
+
+    @Autowired
+    public UploadController(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @RequestMapping("/upload")
     @ResponseBody
@@ -65,18 +76,19 @@ public class UploadController {
                 return response;
             }
             //是否是图片格式
-            String filename = file.getOriginalFilename();
-            if (FileUtil.isPic(filename)) {
-                File dest = FileUtil.generateFile(dir, filename, false);
-                response.setData(filename);
-                filename = dest.getName();
-                logger.debug("Saving into " + dest.getAbsolutePath());
+            String originalFilename = file.getOriginalFilename();
+            if (FileUtil.isPic(originalFilename)) {
+                File dest = FileUtil.generateFile(dir, originalFilename, false);
+                response.setData(originalFilename);
+                String saveName = dest.getName();
+                logger.debug("Saving into {}", dest.getAbsolutePath());
                 FileUtil.checkAndCreateDir(dest.getParentFile());
                 try {
                     file.transferTo(dest);
+                    imageService.insertImage(new ImageModel(originalFilename, saveName, dest.getAbsolutePath(), ImageModel.STATUS_NORMAL));
 
                     response.setCode(200);
-                    response.setMsg(getCorrectDirPath(dir) + filename);
+                    response.setMsg(getCorrectDirPath(dir) + saveName);
                     GlobalConfig.imageUploadedCount(GlobalConfig.imageUploadedCount() + 1);
                     return response;
                 } catch (IOException e) {
