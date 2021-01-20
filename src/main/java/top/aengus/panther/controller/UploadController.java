@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import top.aengus.panther.access.HttpOrHttpsAccess;
 import top.aengus.panther.core.GlobalConfig;
 import top.aengus.panther.core.Response;
-import top.aengus.panther.dao.ImageRepository;
 import top.aengus.panther.model.ImageModel;
 import top.aengus.panther.service.ImageService;
 import top.aengus.panther.tool.FileUtil;
@@ -105,6 +104,7 @@ public class UploadController {
         }
     }
 
+    // TODO 使用imageService添加记录
     @RequestMapping("/clone")
     @ResponseBody
     public Response<String> clone(String url, String dir, HttpServletRequest request, HttpSession session) {
