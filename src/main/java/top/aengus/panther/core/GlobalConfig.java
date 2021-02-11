@@ -24,7 +24,7 @@ public class GlobalConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalConfig.class);
 
-    public static final String CONFIG_FILENAME = "config.ini";
+    public static final String CONFIG_FILENAME = "panther-config.ini";
 
     public static final String CONFIG_KEY_IMAGE_UPLOADED_COUNT = "imageUploadedCount";
     public static final String CONFIG_KEY_VERSION = "version";
