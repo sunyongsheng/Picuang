@@ -1,47 +1,25 @@
 package top.aengus.panther.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import top.aengus.panther.dao.ImageRepository;
+import org.springframework.web.multipart.MultipartFile;
+import top.aengus.panther.enums.NamingRule;
+import top.aengus.panther.model.ImageDTO;
 import top.aengus.panther.model.ImageModel;
 
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * @author Aengus Sun (sys6511@126.com)
  * <p>
  * date 2021/1/20
  */
-@Service
-public class ImageService {
+public interface ImageService {
 
-    private final ImageRepository imageRepository;
+    List<ImageDTO> findAllByAppId(String appId);
 
-    @Autowired
-    public ImageService(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
+    ImageModel findImageByName(String filename);
 
-    public List<ImageModel> findAllImages() {
-        return imageRepository.findAll().stream()
-                .filter(imageModel -> !imageModel.isDeleted())
-                .collect(Collectors.toList());
-    }
+    ImageDTO saveImage(MultipartFile image, NamingRule rule, String dir, String appId);
 
-    public List<ImageModel> findAllDeletedImages() {
-        return imageRepository.findAll().stream()
-                .filter(ImageModel::isDeleted)
-                .collect(Collectors.toList());
-    }
+    boolean deleteImage(String filename);
 
-    public void insertImage(ImageModel imageModel) {
-        imageRepository.save(imageModel);
-    }
-
-    public void deleteImage(ImageModel imageModel) {
-        imageModel.delete();
-        imageRepository.save(imageModel);
-    }
 }
