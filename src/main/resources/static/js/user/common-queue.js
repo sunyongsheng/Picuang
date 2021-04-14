@@ -29,21 +29,28 @@ function clone() {
 }
 
 function upload() {
-    if (document.getElementById("upload").files.length == 0) {
+    if (document.getElementById("upload").files.length === 0) {
         $("#status").text("请选择图片！");
     } else {
         $("#status").text("准备传输，请稍等。");
-        var dir = $("#picDir").val();
-        if (dir == null) {
-            dir = "post";
+        let appId = $("#appId").val();
+        if (appId == null || appId.length === 0) {
+            sendInnerNotify("请输入AppID");
+            $("#status").text("无有效AppID");
+            return;
         }
+        let nameRule = $("#nameRule").val();
+        if (nameRule == null || nameRule.length === 0) {
+            nameRule = 2;
+        }
+        let dir = $("#dir").val();
         for (var i = 0; i < document.getElementById("upload").files.length; i++) {
             var file = document.getElementById("upload").files[i];
             suffixName = file.name.split(".");
             suffixName = suffixName[suffixName.length - 1];
             suffixName = suffixName.toLowerCase();
             if (suffixName === "jpeg" || suffixName === "jpg" || suffixName === "png" || suffixName === "gif" || suffixName === "svg" || suffixName === "bmp" || suffixName === "ico" || suffixName === "tiff") {
-                uploadToServer(file, dir);
+                uploadToServer(file, appId, nameRule, dir);
             } else {
                 sendInnerNotify(file.name + " 格式不受支持，将跳过该图片的上传。");
             }
@@ -51,19 +58,23 @@ function upload() {
     }
 }
 
-function uploadToServer(file, dir) {
-    if (sourceAll == undefined) {
+function uploadToServer(file, appId, nameRule, dir) {
+    if (sourceAll === undefined) {
         console.log("Generating new Token...");
         sourceAll = axios.CancelToken.source();
     }
     size = parseInt(((file.size / 1024) / 1024).toFixed(1));
     picLimit = parseInt($("#picLimit").text().replace("MB", ""));
     if (size <= picLimit) {
-        var param = new FormData();
+        const param = new FormData();
         param.append('file', file);
         param.append("dir", dir);
-        var config = {
-            headers: {'Content-Type': 'multipart/form-data'},
+        param.append('name_rule', nameRule);
+        let config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'AppId': appId
+            },
             onUploadProgress: function (progressEvent) {
                 if (progressEvent.lengthComputable) {
                     progress = progressEvent.loaded / progressEvent.total * 100 | 0;
@@ -75,18 +86,18 @@ function uploadToServer(file, dir) {
         };
         ++queue;
         ++tempCount;
-        axios.post('/upload', param, config)
+        axios.post('/api/v1/image', param, config)
             .then(function (response) {
                 change(0);
                 responseHandler(response);
                 sendStatus('<button onclick="stopUploadThreads()" class="btn btn-info">终止上传</button><br><br>多线程传输中<br><strong>队列：' + queue + '</strong><br>' + file.name + '：' + progress + '%');
                 --queue;
-                if (queue == 0) {
-                    if (response.data.code == 401) {
-                        sendStatus("<strong>上传失败！</strong>" + response.data.msg);
-                    } else {
+                if (queue === 0) {
+                    if (response.data.code == 200) {
                         sendNotify(tempCount + "张图片已上传成功。");
                         sendStatus("<strong>" + tempCount + "张</strong> 图片已全部传输完毕。");
+                    } else {
+                        sendStatus("<strong>上传失败！</strong>" + response.data.msg);
                     }
                     tempCount = 0;
                 }
@@ -99,7 +110,7 @@ function uploadToServer(file, dir) {
                     change(0);
                     sendStatus("您的图片大小超过限制:(");
                     --queue;
-                    if (queue == 0) {
+                    if (queue === 0) {
                         sendNotify(tempCount + "张图片已上传成功，部分图片超出大小限制。");
                         sendStatus("<strong>" + tempCount + "张</strong> 图片部分传输成功。（部分图片大小超过限制）");
                         tempCount = 0;

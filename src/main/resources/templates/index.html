@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html>
-<html lang="en">
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>🛏Picuang - 永久免费 | 免登录图床</title>
@@ -66,7 +64,32 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="input-group">
-                                <input class="form-control" id="picDir" placeholder="请输入图片文件夹，默认post" type="text">
+                                <input class="form-control" id="appId" placeholder="请输入AppID（必填）" type="text">
+                                <span class="input-group-btn">
+                                     <button class="btn btn-default" type="button">NoOp!</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="input-group">
+                                <input class="form-control" id="nameRule" placeholder="命名规则，默认使用「日期-UUID」作为文件名" type="number">
+                                <span class="input-group-btn">
+                                     <button class="btn btn-default" type="button">NoOp!</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="input-group">
+                                <input class="form-control" id="dir" placeholder="若App无权限，则此栏无效" type="text">
+                                <span class="input-group-btn">
+                                     <button class="btn btn-default" type="button">NoOp!</button>
+                                </span>
                             </div>
                         </div>
                     </div>
