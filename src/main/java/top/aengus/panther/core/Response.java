@@ -1,50 +1,54 @@
 package top.aengus.panther.core;
 
+import lombok.Data;
+import org.springframework.http.HttpStatus;
+
+@Data
 public class Response<T> {
-    private Integer code = 404;
-    private String msg = "";
+
+    public static final int CODE_SUCCESS = HttpStatus.OK.value();
+    public static final int CODE_BAD_REQUEST = HttpStatus.BAD_REQUEST.value();
+    public static final int CODE_NO_AUTH = HttpStatus.UNAUTHORIZED.value();
+    public static final int CODE_NOT_FOUND = HttpStatus.NOT_FOUND.value();
+    public static final int CODE_ERROR = HttpStatus.INTERNAL_SERVER_ERROR.value();
+
+    private Integer code;
+    private String msg;
     private T data;
 
-    public Response() {
-        super();
+    public Response<T> success() {
+        this.code = CODE_SUCCESS;
+        return this;
     }
 
-    public Response(Integer code, String msg, T data) {
-        this.code = code;
+    public Response<T> badRequest() {
+        this.code = CODE_BAD_REQUEST;
+        return this;
+    }
+
+    public Response<T> noAuth() {
+        this.code = CODE_NO_AUTH;
+        return this;
+    }
+
+    public Response<T> notFound() {
+        this.code = CODE_NOT_FOUND;
+        return this;
+    }
+
+    public Response<T> unknownError() {
+        this.code = CODE_ERROR;
+        return this;
+    }
+
+    public Response<T> msg(String msg) {
         this.msg = msg;
+        return this;
+    }
+
+    public Response<T> data(T data) {
         this.data = data;
+        return this;
     }
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return "Response{" +
-                "code=" + code +
-                ", msg='" + msg + "'" +
-                ", data=" + data +
-                '}';
-    }
 }
