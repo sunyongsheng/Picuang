@@ -39,10 +39,13 @@ public class FileUtil {
     }
 
     public static String getExtension(String filename) {
-        if (filename == null) return ".jpg";
-        String suffixName = filename.substring(filename.lastIndexOf("."));
-        suffixName = suffixName.toLowerCase();
-        return suffixName;
+        if (filename == null) return null;
+        int index = filename.lastIndexOf(".");
+        if (index >= 0) {
+            String suffixName = filename.substring(index);
+            return suffixName.toLowerCase();
+        }
+        return null;
     }
 
     public static boolean isPic(String filename) {
