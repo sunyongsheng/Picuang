@@ -1,6 +1,7 @@
 package top.aengus.panther.service;
 
 import top.aengus.panther.model.AppInfo;
+import top.aengus.panther.model.CreateAppParam;
 
 /**
  * @author sunyongsheng (sunyongsheng@bytedance.com)
@@ -12,4 +13,6 @@ public interface AppInfoService {
     AppInfo findByAppId(String appId);
 
     boolean isSuperRoleApp(String appId);
+
+    String createApp(CreateAppParam appInfo);
 }

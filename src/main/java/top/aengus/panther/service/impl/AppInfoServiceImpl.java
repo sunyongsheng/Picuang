@@ -1,10 +1,14 @@
 package top.aengus.panther.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.aengus.panther.dao.AppInfoRepository;
 import top.aengus.panther.model.AppInfo;
+import top.aengus.panther.model.CreateAppParam;
 import top.aengus.panther.service.AppInfoService;
+
+import java.util.Date;
 
 @Service
 public class AppInfoServiceImpl implements AppInfoService {
@@ -25,5 +29,17 @@ public class AppInfoServiceImpl implements AppInfoService {
     public boolean isSuperRoleApp(String appId) {
         AppInfo appInfo = appInfoRepository.findByAppId(appId);
         return appInfo != null && appInfo.isSuperRole();
+    }
+
+    @Override
+    public String createApp(CreateAppParam appInfo) {
+        String appId = IdUtil.fastSimpleUUID();
+        AppInfo toSave = appInfo.toAppInfo();
+        toSave.setAppId(appId);
+        toSave.setCreateTime(new Date().getTime());
+        toSave.setRole(AppInfo.ROLE_NORMAL);
+        toSave.setStatue(AppInfo.STATUS_NORMAL);
+        appInfoRepository.save(toSave);
+        return appId;
     }
 }
