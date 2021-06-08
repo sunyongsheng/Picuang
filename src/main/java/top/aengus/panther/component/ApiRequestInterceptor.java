@@ -1,6 +1,6 @@
 package top.aengus.panther.component;
 
-import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,13 +31,15 @@ public class ApiRequestInterceptor implements HandlerInterceptor {
         String appId = request.getHeader(APP_ID);
         if (appId == null || appId.isEmpty()) {
             log.warn("拦截到请求，地址【{} {}】，无有效AppId", request.getMethod(), request.getRequestURI());
-            response.getWriter().write(JSONUtil.toJsonStr(new Response<String>().noAuth().msg("AppID无效")));
+            ObjectMapper mapper = new ObjectMapper();
+            response.getWriter().write(mapper.writeValueAsString(new Response<String>().noAuth().msg("AppID无效")));
             return false;
         }
         AppInfo appInfo = appInfoService.findByAppId(appId);
         if (appInfo == null) {
             log.warn("拦截到请求，地址【{} {}】，{}为【{}】", request.getMethod(), request.getRequestURI(), APP_ID, appId);
-            response.getWriter().write(JSONUtil.toJsonStr(new Response<String>().noAuth().msg("AppID无效")));
+            ObjectMapper mapper = new ObjectMapper();
+            response.getWriter().write(mapper.writeValueAsString(new Response<String>().noAuth().msg("AppID无效")));
             return false;
         }
         request.setAttribute(Constants.REQUEST_APP_INFO_INTERNAL, appInfo);
@@ -45,7 +47,7 @@ public class ApiRequestInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         request.setAttribute(Constants.REQUEST_APP_INFO_INTERNAL, null);
     }
 }
