@@ -12,22 +12,24 @@ import java.sql.Timestamp;
 @Data
 public class ImageDTO {
 
+    private Long id;
+
     // 图片文件名
     private String name;
 
     // 图片的URL
     private String url;
 
-    private Timestamp uploadTime;
+    private Long uploadTime;
 
     private String creator;
 
     private Long size;
 
-    public static ImageDTO from(ImageModel model, String baseUrl) {
+    public static ImageDTO from(ImageModel model) {
         ImageDTO dto = new ImageDTO();
         dto.setName(model.getSaveName());
-        dto.setUrl(baseUrl + model.getRelativePath());
+        dto.setUrl(model.getUrl());
         dto.setUploadTime(model.getUploadTime());
         dto.setCreator(model.getCreator());
         dto.setSize(model.getSize());
