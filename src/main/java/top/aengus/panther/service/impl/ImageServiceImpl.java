@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.aengus.panther.core.Constants;
 import top.aengus.panther.core.GlobalConfig;
 import top.aengus.panther.dao.ImageRepository;
+import top.aengus.panther.enums.ImageStatus;
 import top.aengus.panther.enums.NamingRule;
 import top.aengus.panther.model.ImageDTO;
 import top.aengus.panther.model.ImageModel;
@@ -65,7 +66,7 @@ public class ImageServiceImpl implements ImageService {
         imageModel.setUploadTime(Timestamp.from(Instant.now()));
         imageModel.setCreator(appId);
         imageModel.setSize(image.getSize());
-        imageModel.setStatus(ImageModel.STATUS_NORMAL);
+        imageModel.setStatus(ImageStatus.NORMAL.getCode());
         imageRepository.save(imageModel);
         try {
             File dest = new File(absolutePath);

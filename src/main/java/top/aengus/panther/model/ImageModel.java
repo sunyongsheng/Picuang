@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Table;
+import top.aengus.panther.enums.ImageStatus;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -23,9 +24,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageModel {
-
-    public static final int STATUS_NORMAL = 0;
-    public static final int STATUS_DELETED = -1;
 
     @Id
     @Column(name = "image_id", unique = true, nullable = false)
@@ -64,11 +62,11 @@ public class ImageModel {
     }
 
     public void delete() {
-        this.status = STATUS_DELETED;
+        this.status = ImageStatus.DELETED.getCode();
     }
 
     public boolean isDeleted() {
-        return status == STATUS_DELETED;
+        return status == ImageStatus.DELETED.getCode();
     }
 
 }
