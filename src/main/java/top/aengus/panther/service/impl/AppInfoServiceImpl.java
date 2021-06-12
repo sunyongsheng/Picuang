@@ -4,6 +4,8 @@ import cn.hutool.core.util.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.aengus.panther.dao.AppInfoRepository;
+import top.aengus.panther.enums.AppRole;
+import top.aengus.panther.enums.AppStatus;
 import top.aengus.panther.model.AppInfo;
 import top.aengus.panther.model.CreateAppParam;
 import top.aengus.panther.service.AppInfoService;
@@ -37,8 +39,8 @@ public class AppInfoServiceImpl implements AppInfoService {
         AppInfo toSave = appInfo.toAppInfo();
         toSave.setAppId(appId);
         toSave.setCreateTime(new Date().getTime());
-        toSave.setRole(AppInfo.ROLE_NORMAL);
-        toSave.setStatue(AppInfo.STATUS_NORMAL);
+        toSave.setRole(AppRole.NORMAL.getCode());
+        toSave.setStatus(AppStatus.NORMAL.getCode());
         appInfoRepository.save(toSave);
         return appId;
     }

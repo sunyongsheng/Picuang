@@ -3,6 +3,7 @@ package top.aengus.panther.model;
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import top.aengus.panther.enums.AppRole;
 
 import javax.persistence.*;
 
@@ -11,13 +12,6 @@ import javax.persistence.*;
 @DynamicInsert
 @Data
 public class AppInfo {
-
-    public static final int STATUS_NORMAL = 0;
-    public static final int STATUS_DELETED = -1;
-    public static final int STATUS_LOCKED = 1;
-
-    public static final int ROLE_NORMAL = 0;
-    public static final int ROLE_SUPER = 1;
 
     @Id
     @Column(name = "id", unique = true, nullable = false)
@@ -49,10 +43,10 @@ public class AppInfo {
     private Integer configId;
 
     @Column(name = "status", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
-    private Integer statue;
+    private Integer status;
 
     public boolean isSuperRole() {
-        return this.role == ROLE_SUPER;
+        return AppRole.SUPER.getCode().equals(role);
     }
 
 }
