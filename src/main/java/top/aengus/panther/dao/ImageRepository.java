@@ -16,6 +16,8 @@ public interface ImageRepository extends PagingAndSortingRepository<ImageModel, 
 
     ImageModel findBySaveName(String saveName);
 
+    ImageModel findByIdAndCreator(Long id, String creator);
+
     List<ImageModel> findAllByCreator(String appId);
 
     Page<ImageModel> findAllByCreator(String appId, Pageable pageable);

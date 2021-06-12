@@ -20,6 +20,6 @@ public interface ImageService {
 
     ImageDTO saveImage(MultipartFile image, NamingRule rule, String dir, String appId);
 
-    boolean deleteImage(String filename);
+    boolean deleteImage(Long imageId, String operator);
 
 }

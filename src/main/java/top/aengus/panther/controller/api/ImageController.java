@@ -2,10 +2,7 @@ package top.aengus.panther.controller.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.aengus.panther.core.Constants;
 import top.aengus.panther.core.Response;
@@ -69,5 +66,12 @@ public class ImageController extends ApiV1Controller {
         Response<List<ImageDTO>> response = new Response<>();
         AppInfo appInfo = (AppInfo) request.getAttribute(Constants.REQUEST_APP_INFO_INTERNAL);
         return response.data(imageService.findAllByAppId(appInfo.getAppId()));
+    }
+
+    @DeleteMapping("/image/{id}")
+    public Response<Boolean> delete(HttpServletRequest request, @PathVariable("id") Long imageId) {
+        Response<Boolean> response = new Response<>();
+        AppInfo appInfo = (AppInfo) request.getAttribute(Constants.REQUEST_APP_INFO_INTERNAL);
+        return response.data(imageService.deleteImage(imageId, appInfo.getAppId()));
     }
 }

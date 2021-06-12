@@ -116,8 +116,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public boolean deleteImage(String filename) {
-        ImageModel original = imageRepository.findBySaveName(filename);
+    public boolean deleteImage(Long imageId, String operation) {
+        ImageModel original = imageRepository.findByIdAndCreator(imageId, operation);
         if (original == null) {
             return false;
         }
