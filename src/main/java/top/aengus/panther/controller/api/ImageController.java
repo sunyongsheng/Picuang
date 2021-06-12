@@ -14,7 +14,7 @@ import top.aengus.panther.model.AppInfo;
 import top.aengus.panther.model.ImageDTO;
 import top.aengus.panther.service.ImageService;
 import top.aengus.panther.tool.ImageDirUtil;
-import top.aengus.panther.tool.FileUtil;
+import top.aengus.panther.tool.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -43,26 +43,11 @@ public class ImageController extends ApiV1Controller {
                                      @RequestParam(value = "dir", required = false) String dirPath,
                                      @RequestParam("file") MultipartFile file) {
         Response<ImageDTO> response = new Response<>();
-        if (file.isEmpty()) {
-            return response.badRequest().msg("文件为空");
-        }
-        if (!FileUtil.isPic(file.getOriginalFilename())) {
-            return response.badRequest().msg("非图片文件");
-        }
 
         AppInfo appInfo = (AppInfo) request.getAttribute(Constants.REQUEST_APP_INFO_INTERNAL);
-        if (appInfo.isSuperRole()) {
-            if (dirPath == null) {
-                dirPath = ImageDirUtil.concat(ImageDirUtil.NAME_APP, appInfo.getEnglishName());
-            } else {
-                if (!ImageDirUtil.isValidDir(dirPath)) {
-                    return response.badRequest().msg("路径不合法，只能为common|post|travel");
-                }
-            }
-        } else {
-            if (dirPath != null && !dirPath.isEmpty()) {
-                return response.badRequest().msg("无保存到指定目录权限");
-            }
+        if (appInfo.isSuperRole() && StringUtil.isEmpty(dirPath)) {
+            dirPath = ImageDirUtil.concat(ImageDirUtil.NAME_APP, appInfo.getEnglishName());
+        } else if (!appInfo.isSuperRole()) {
             dirPath = ImageDirUtil.concat(ImageDirUtil.NAME_APP, appInfo.getEnglishName());
         }
         NamingRule namingRule = NamingRule.fromCode(rule);
