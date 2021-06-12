@@ -7,9 +7,10 @@ import top.aengus.panther.enums.AppRole;
 
 import javax.persistence.*;
 
-@Entity(name = "app_infos")
+@Entity
 @DynamicUpdate
 @DynamicInsert
+@Table(name = "tb_app_info")
 @Data
 public class AppInfo {
 
@@ -40,7 +41,7 @@ public class AppInfo {
     private String email;
 
     @Column(name = "config_id")
-    private Integer configId;
+    private Long configId;
 
     @Column(name = "status", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Integer status;
