@@ -81,10 +81,11 @@ public class ImageServiceImpl implements ImageService {
             File dest = new File(absolutePath);
             FileUtil.checkAndCreateDir(dest.getParentFile());
             image.transferTo(dest);
+            log.info("上传图片成功：name={}, namingRule={}", dest.getName(), rule.getDesc());
             return ImageDTO.from(imageModel);
         } catch (IOException e) {
             log.error("保存图片异常", e);
-            return null;
+            throw new BusinessException(e.getMessage());
         }
     }
 

@@ -47,14 +47,7 @@ public class ImageController extends ApiV1Controller {
         } else if (!appInfo.isSuperRole()) {
             dirPath = ImageDirUtil.concat(ImageDirUtil.NAME_APP, appInfo.getEnglishName());
         }
-        ImageDTO res = imageService.saveImage(file, rule, dirPath, appInfo.getAppId());
-        if (res != null) {
-            log.info("上传图片成功：name={}, namingRule={}", res.getName(), rule.getDesc());
-            return response.success().msg("保存成功").data(res);
-        } else {
-            log.warn("上传图片失败，内部错误");
-            return response.unknownError().msg("保存失败，未知错误");
-        }
+        return response.success().msg("保存成功").data(imageService.saveImage(file, rule, dirPath, appInfo.getAppId()));
     }
 
     /**
