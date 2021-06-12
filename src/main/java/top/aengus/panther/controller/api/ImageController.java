@@ -36,7 +36,7 @@ public class ImageController extends ApiV1Controller {
      */
     @PostMapping("/image")
     public Response<ImageDTO> upload(HttpServletRequest request,
-                                     @RequestParam(value = "name_rule", defaultValue = "2") Integer rule,
+                                     @RequestParam(value = "name_rule", defaultValue = "DATE_UUID_HYPHEN") NamingRule rule,
                                      @RequestParam(value = "dir", required = false) String dirPath,
                                      @RequestParam("file") MultipartFile file) {
         Response<ImageDTO> response = new Response<>();
@@ -47,10 +47,9 @@ public class ImageController extends ApiV1Controller {
         } else if (!appInfo.isSuperRole()) {
             dirPath = ImageDirUtil.concat(ImageDirUtil.NAME_APP, appInfo.getEnglishName());
         }
-        NamingRule namingRule = NamingRule.fromCode(rule);
-        ImageDTO res = imageService.saveImage(file, namingRule, dirPath, appInfo.getAppId());
+        ImageDTO res = imageService.saveImage(file, rule, dirPath, appInfo.getAppId());
         if (res != null) {
-            log.info("上传图片成功：name={}, namingRule={}", res.getName(), namingRule.getDesc());
+            log.info("上传图片成功：name={}, namingRule={}", res.getName(), rule.getDesc());
             return response.success().msg("保存成功").data(res);
         } else {
             log.warn("上传图片失败，内部错误");
