@@ -38,7 +38,7 @@ public class AppInfoServiceImpl implements AppInfoService {
         String appId = IdUtil.fastSimpleUUID();
         AppInfo toSave = appInfo.toAppInfo();
         toSave.setAppId(appId);
-        toSave.setCreateTime(new Date().getTime());
+        toSave.setCreateTime(System.currentTimeMillis());
         toSave.setRole(AppRole.NORMAL.getCode());
         toSave.setStatus(AppStatus.NORMAL.getCode());
         appInfoRepository.save(toSave);
